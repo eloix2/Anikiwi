@@ -1,4 +1,4 @@
-package com.example.anikiwi.ui.dashboard;
+package com.example.anikiwi.ui.anime;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.anikiwi.databinding.FragmentDashboardBinding;
+import com.example.anikiwi.databinding.FragmentAnimeBinding;
 
-public class DashboardFragment extends Fragment {
+public class AnimeFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentAnimeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        AnimeViewModel animeViewModel =
+                new ViewModelProvider(this).get(AnimeViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentAnimeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textAnime;
+        animeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
