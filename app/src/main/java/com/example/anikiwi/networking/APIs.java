@@ -8,6 +8,6 @@ import retrofit2.http.GET;
 public interface APIs {
     String BASE_URL = "https://anikiwi-api.onrender.com/api/";
 
-    @GET("anime")
+    @GET("animes/search?year=2023&page=1&limit=50")
     Call<List<Anime>> getAnimes();
 }
