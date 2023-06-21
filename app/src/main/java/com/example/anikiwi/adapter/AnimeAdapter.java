@@ -29,34 +29,29 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.MyViewHolder
         this.animes = animes;
         this.clickListener = clickListener;
     }
-
+    //sets the animes to the provided animes
     public void setAnimes(List<Anime> animes) {
         this.animes = animes;
         notifyDataSetChanged();
     }
-
+    //initialize the contents of the View, adding the anime item layout to the RecyclerView
     @NonNull
     @Override
     public AnimeAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.rv_anime_item, parent, false);
         return new MyViewHolder(view);
     }
-
+    //updates the contents of the itemView to reflect the item at the given position
     @Override
     public void onBindViewHolder(@NonNull AnimeAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.tv_anime_title.setText(this.animes.get(position).getTitle());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onAnimeClick(animes.get(position));
-            }
-        });
+        holder.itemView.setOnClickListener(v -> clickListener.onAnimeClick(animes.get(position)));
         Glide.with(context)
                 .load(this.animes.get(position).getImage_url())
                 .apply(RequestOptions.centerCropTransform())
                 .into(holder.img_anime);
     }
-
+    //returns the total number of items in the data set held by the adapter
     @Override
     public int getItemCount() {
         if(this.animes != null)
@@ -65,6 +60,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.MyViewHolder
         return 0;
     }
 
+    //provides a reference to the views for each data item
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tv_anime_title;
         ImageView img_anime;
@@ -74,7 +70,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<AnimeAdapter.MyViewHolder
             img_anime = (ImageView) itemView.findViewById(R.id.img_anime);
         }
     }
-
+    //interface for click listener
     public interface ItemClickListener {
         void onAnimeClick(Anime anime);
     }

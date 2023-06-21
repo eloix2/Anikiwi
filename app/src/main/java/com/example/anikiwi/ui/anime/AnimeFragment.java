@@ -31,31 +31,31 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                              ViewGroup container, Bundle savedInstanceState) {
         AnimeViewModel animeViewModel =
                 new ViewModelProvider(this).get(AnimeViewModel.class);
+        animeViewModel.init();
 
         binding = FragmentAnimeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final RecyclerView rvAnime = binding.rvAnime;
         TextView noResult = binding.tvErrorAnime;
-        rvAnime.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        adapter = new AnimeAdapter(this.getContext(), animes, this);
-        rvAnime.setAdapter(adapter);
-
-        animeViewModel.getAnimesObserver().observe(getViewLifecycleOwner(), new Observer<List<Anime>>() {
-            @Override
-            public void onChanged(List<Anime> anime) {
-                if(anime != null) {
-                    animes = anime;
-                    adapter.setAnimes(animes);
-                    noResult.setVisibility(View.GONE);
-                }
-                else {
-                    noResult.setVisibility(View.VISIBLE);
-                }
+        animeViewModel.getAnimesObserver().observe(getViewLifecycleOwner(), anime -> {
+            if(anime != null) {
+                animes = anime;
+                adapter.setAnimes(animes);
+                noResult.setVisibility(View.GONE);
+            }
+            else {
+                noResult.setVisibility(View.VISIBLE);
             }
         });
-        animeViewModel.makeApiCall();
+        initRecyclerView();
         return root;
+    }
+
+    private void initRecyclerView() {
+        RecyclerView recyclerView = binding.rvAnime;
+        recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
+        adapter = new AnimeAdapter(this.getContext(), animes, this);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

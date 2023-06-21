@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static RetrofitClient instance = null;
-    private APIs apis;
+    private static APIs apis;
 
     private RetrofitClient() {
         Retrofit retrofit = new Retrofit.Builder()
