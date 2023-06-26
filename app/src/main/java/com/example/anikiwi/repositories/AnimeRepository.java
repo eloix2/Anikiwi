@@ -51,4 +51,25 @@ public class AnimeRepository {
         });
     }
 
+    public void loadMore(int pageNumber) {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<List<Anime>> call = api.getAnimes2(pageNumber);
+        call.enqueue(new Callback<List<Anime>>() {
+            @Override
+            public void onResponse(Call<List<Anime>> call, Response<List<Anime>> response) {
+                //add the new data to the list
+                List<Anime> oldAnimes = animes.getValue();
+                assert oldAnimes != null;
+                assert response.body() != null;
+                oldAnimes.addAll(response.body());
+                animes.postValue(oldAnimes);
+            }
+
+            @Override
+            public void onFailure(Call<List<Anime>> call, Throwable t) {
+                animes.postValue(null);
+            }
+        });
+    }
+
 }
