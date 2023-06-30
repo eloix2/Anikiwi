@@ -6,7 +6,9 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.anikiwi.adapter.AnimeAdapter;
 import com.example.anikiwi.databinding.FragmentAnimeBinding;
 import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -30,6 +34,9 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     private List<Anime> animes;
     private AnimeAdapter adapter;
     boolean isLoading = false;
+    ProgressBar progressBar;
+    FloatingActionButton floatingActionButtonRetry;
+    TextView noResult;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,26 +46,46 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
         binding = FragmentAnimeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        TextView noResult = binding.tvErrorAnime;
-        animeViewModel.getAnimesObserver().observe(getViewLifecycleOwner(), anime -> {
-            if(anime != null) {
-                animes = anime;
-                adapter.setAnimes(animes);
+        floatingActionButtonRetry = binding.fabRetry;
+        noResult = binding.tvErrorAnime;
+        progressBar = binding.pbAnime;
+        floatingActionButtonRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: mirar que esto funcione
+                progressBar.setVisibility(View.VISIBLE);
+                floatingActionButtonRetry.setVisibility(View.GONE);
                 noResult.setVisibility(View.GONE);
-            }
-            else {
-                noResult.setVisibility(View.VISIBLE);
+                animeViewModel.refreshAnimes();
             }
         });
+
+        initObserver(animeViewModel);
         initRecyclerView();
         initScrollListener(animeViewModel);
         return root;
     }
 
+    private void initObserver(AnimeViewModel animeViewModel){
+        animeViewModel.getAnimesObserver().observe(getViewLifecycleOwner(), anime -> {
+            if(anime != null) {
+                animes = anime;
+                adapter.setAnimes(animes);
+                progressBar.setVisibility(View.GONE);
+                floatingActionButtonRetry.setVisibility(View.GONE);
+                noResult.setVisibility(View.GONE);
+            }
+            else {
+                progressBar.setVisibility(View.GONE);
+                floatingActionButtonRetry.setVisibility(View.VISIBLE);
+                noResult.setVisibility(View.VISIBLE);
+            }
+        });
+    }
     private void initRecyclerView() {
         RecyclerView recyclerView = binding.rvAnime;
-        recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 1));
+        //recyclerView.getRecycledViewPool().clear(); operacion costosa
+        recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = new AnimeAdapter(this.getContext(), animes, this);
         recyclerView.setAdapter(adapter);
     }
@@ -86,35 +113,31 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                if (!isLoading) {
+                if (!animeViewModel.isLoading()) {
                     if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == animes.size() - 1) {
                         // bottom of list!
+                        animeViewModel.setLoading(true);
                         loadMore(animeViewModel);
-                        isLoading = true;
                     }
                 }
             }
+
+            //Todo: He cambiado la manera en la que se invoca a la progress bar para no meterla en el reciclerview, esto lo ha arreglado. En caso que lo deje así lo ideal quizas es borrar lo que tenga que ver con la antigua progress bar
+
             private void loadMore(AnimeViewModel animeViewModel) {
-                animes.add(null);
-                adapter.notifyDataSetChanged();
-                //adapter.notifyItemInserted(animes.size() - 1);
+
+                progressBar.setVisibility(View.VISIBLE);
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        int lastAnime = animeViewModel.getAnimeSize() - 1;
-                        animes.remove(lastAnime);
-                        //TODO: fix this error. A veces se cae la app al hacer scroll estando en la ultima pagina, los notify tampoco van bien, parece que pilla el index antiguo cuando se cambia de vista y se hace scroll en casos muy concretos
-                        //TODO: mirar si el getItemCount() del adapter funciona
-                        //adapter.notifyDataSetChanged();
-                        //int scrollPosition = animes.size();
-                        //adapter.notifyItemRemoved(lastAnime);
                         //load more data from the viewmodel
                         animeViewModel.loadMore();
-                        //animes.addAll(animes);
-                        //adapter.notifyDataSetChanged();
-                        isLoading = false;
+                        adapter.notifyDataSetChanged();
+
+                        animeViewModel.setLoading(false);
+                        progressBar.setVisibility(View.GONE);
                     }
-                }, 2000);
+                }, 1000);
             }
         });
 

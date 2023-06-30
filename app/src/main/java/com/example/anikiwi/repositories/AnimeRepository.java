@@ -23,6 +23,7 @@ public class AnimeRepository {
         if (instance == null) {
             instance = new AnimeRepository();
         }
+        //Log.d("AnimeRepository", "getInstance: " + instance.toString());
         return instance;
     }
 
@@ -32,6 +33,7 @@ public class AnimeRepository {
 
     public MutableLiveData<List<Anime>> getAnimes() {
         makeApiCall();
+        //Log.d("AnimeRepository", "getAnimes: " + animes.toString());
         return animes;
     }
 
@@ -41,11 +43,13 @@ public class AnimeRepository {
         call.enqueue(new Callback<List<Anime>>() {
             @Override
             public void onResponse(Call<List<Anime>> call, Response<List<Anime>> response) {
+                //Log.d("AnimeRepository", "onResponse: " + response.body().toString());
                 animes.postValue(response.body());
             }
 
             @Override
             public void onFailure(Call<List<Anime>> call, Throwable t) {
+                //Log.d("AnimeRepository", "onFailure: " + t.getMessage());
                 animes.postValue(null);
             }
         });

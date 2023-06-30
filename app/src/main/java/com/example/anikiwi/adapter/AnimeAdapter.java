@@ -35,6 +35,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.animes = animes;
         notifyDataSetChanged();
     }
+
     //initialize the contents of the View, adding the anime item layout to the RecyclerView, based on the viewType
     @NonNull
     @Override
@@ -44,6 +45,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             view = LayoutInflater.from(context).inflate(R.layout.rv_anime_item, parent, false);
             return new ItemViewHolder(view);
         } else {
+            //Todo: borrar esto
             view = LayoutInflater.from(context).inflate(R.layout.rv_anime_loading, parent, false);
             return new LoadingViewHolder(view);
         }
@@ -69,6 +71,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 .into(holder.img_anime);
     }
 
+    //todo: borrar esto
     private void showLoadingView(LoadingViewHolder holder, int position) {
         //ProgressBar would be displayed
     }
@@ -94,6 +97,7 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    //todo: borrar esto
     public class LoadingViewHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
         public LoadingViewHolder(@NonNull View itemView) {
