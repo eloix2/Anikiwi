@@ -1,5 +1,6 @@
 package com.example.anikiwi.ui.anime;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,10 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.anikiwi.adapter.AnimeAdapter;
 import com.example.anikiwi.databinding.FragmentAnimeBinding;
 import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+import java.util.Objects;
 
 public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickListener {
 
@@ -52,7 +55,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         floatingActionButtonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: mirar que esto funcione
+                //TODO: mirar que esto funcione update: parece que funciona
                 progressBar.setVisibility(View.VISIBLE);
                 floatingActionButtonRetry.setVisibility(View.GONE);
                 noResult.setVisibility(View.GONE);
@@ -99,6 +102,15 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     @Override
     public void onAnimeClick(Anime anime) {
         Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
+        //TODO: hacer que se abra el anime en cuestion
+        //intent a la activity de anime pasando el anime
+
+        Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);
+        intent.putExtra("anime_title", anime.getTitle()); // Example: pass anime title to the details activity
+        // Add other data you want to pass to the AnimeDetailsActivity
+        this.requireContext().startActivity(intent);
+
+
     }
 
     public void initScrollListener(AnimeViewModel animeViewModel) {
