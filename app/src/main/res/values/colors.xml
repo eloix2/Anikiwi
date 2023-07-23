@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="tropical_indigo">#8884FF</color>
+    <color name="hunter_green">#386150</color>
+    <color name="keppel">#58b09c</color>
+    <color name="gray">#828487</color>
+    <color name="rich_black">#04080f</color>
+    <color name="glaucous">#6073a8</color>
+    <color name="raisin_black">#24272d</color>
+
 </resources>
