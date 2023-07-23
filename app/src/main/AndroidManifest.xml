@@ -25,7 +25,8 @@
         </activity>
         <activity
             android:name=".ui.animedata.AnimeDataActivity"
-            android:label="Anime Data" >
+            android:label="Anime Data"
+            android:parentActivityName=".MainActivity">
         </activity>
     </application>
 

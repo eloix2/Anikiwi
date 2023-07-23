@@ -1,8 +1,10 @@
 package com.example.anikiwi.ui.animedata;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.anikiwi.R;
@@ -27,7 +29,14 @@ public class AnimeDataActivity extends AppCompatActivity {
         binding = ActivityAnimeDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.textViewTitle.setText(getIntent().getStringExtra("title"));
+        //add back button
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        binding.textViewTitle.setText(getIntent().getStringExtra("anime_title"));
+
 
         //animeDataViewModel = new ViewModelProvider(this).get(AnimeDataViewModel.class);
         //animeDataViewModel.init();
@@ -37,5 +46,16 @@ public class AnimeDataActivity extends AppCompatActivity {
 
             //}
         //});
+    }
+
+    //add back button functionality replicating the behaviour of real android back button
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // This is the ID of the back button in the ActionBar/Toolbar
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
