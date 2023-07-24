@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "905918218213",
+    "project_id": "anikiwi-tfg",
+    "storage_bucket": "anikiwi-tfg.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905918218213:android:e3d8b5c8b3f1877b92b90c",
+        "android_client_info": {
+          "package_name": "com.example.anikiwi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905918218213-j6qjjs2rvdt4mv95pqlf2fsd52n7tgdo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOaAW5LYYR33gDD_P4QJqxdcBsvqq5UAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "905918218213-j6qjjs2rvdt4mv95pqlf2fsd52n7tgdo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
