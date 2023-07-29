@@ -24,4 +24,8 @@ public class ProfileViewModel extends ViewModel {
     public LiveData<String> getText() {
         return mText;
     }
+
+    public void logOut() {
+        FirebaseAuth.getInstance().signOut();
+    }
 }

@@ -3,6 +3,7 @@ package com.example.anikiwi.ui.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -106,7 +107,8 @@ public class LoginActivity extends AppCompatActivity {
             firebaseAuthWithGoogle(account);
         } catch (ApiException e) {
             // Sign-in failed, handle the error
-            // For example, you can show an error message
+            Toast toast = Toast.makeText(getApplicationContext(), "Sign in failed", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
@@ -125,6 +127,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // Sign-in failed, handle the error
                             // For example, you can show an error message
+                            Toast toast = Toast.makeText(getApplicationContext(), "Sign in failed", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     }
                 });
