@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                     // For example, you can start the main activity here
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish(); // Close the login activity
+                    //Toast.makeText(LoginActivity.this, "User is signed in", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -133,4 +134,5 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+    
 }

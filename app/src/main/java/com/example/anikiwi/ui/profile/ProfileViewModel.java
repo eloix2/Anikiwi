@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.Objects;
 
 public class ProfileViewModel extends ViewModel {
@@ -25,7 +23,4 @@ public class ProfileViewModel extends ViewModel {
         return mText;
     }
 
-    public void logOut() {
-        FirebaseAuth.getInstance().signOut();
-    }
 }
