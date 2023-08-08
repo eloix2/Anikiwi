@@ -21,5 +21,5 @@ public interface APIs {
     Call<String> wakeUp();
 
     @POST("users")
-    Call<String> createUserInDatabase(@Body User user);
+    Call<User> createUserInDatabase(@Body User user);
 }

@@ -74,8 +74,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in, do something if needed
-                    // For example, you can start the main activity here
+                    // User is signed in, add user to database if not already added
+                    AnimeRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
+                    // Start main activity
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish(); // Close the login activity
                     //Toast.makeText(LoginActivity.this, "User is signed in", Toast.LENGTH_SHORT).show();
@@ -144,7 +145,4 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
-    
 }

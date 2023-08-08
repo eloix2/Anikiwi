@@ -79,21 +79,29 @@ public class AnimeRepository {
         });
     }
 
-    public void createUserInDatabase(String displayName, String email) {
-        //recuerda tener en cuenta que la api esta siempre caida al inicio
+    public static void createUserInDatabase(String displayName, String email) {
+        //TODO: recuerda tener en cuenta que la api esta siempre caida al inicio
         APIs api = RetrofitClient.getInstance().getApis();
         User user = new User(displayName, email);
-        Call<String> call = api.createUserInDatabase(user);
-        call.enqueue(new Callback<String>() {
+        Call<User> call = api.createUserInDatabase(user);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("AnimeRepository", "onResponse: " + response.body());
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    Log.d("AnimeRepository", "onResponse: " + response.body());
+                }
+                else if (response.code() == 409) {
+                    Log.d("AnimeRepository", "onResponse: " + response.body());
+                }
+                else {
+                    Log.d("AnimeRepository", "onResponse: " + response.body());
+                }
+
                 //User user = response.body();
-                //TODO: fix error when creating new user expected a string but was BEGIN_OBJECT
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Log.d("AnimeRepository", "onFailure: " + t.getMessage());
             }
         });
