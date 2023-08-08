@@ -1,11 +1,14 @@
 package com.example.anikiwi.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.RetrofitClient;
+import com.example.anikiwi.networking.User;
 
 import java.util.List;
 
@@ -76,4 +79,39 @@ public class AnimeRepository {
         });
     }
 
+    public void createUserInDatabase(String displayName, String email) {
+        //recuerda tener en cuenta que la api esta siempre caida al inicio
+        APIs api = RetrofitClient.getInstance().getApis();
+        User user = new User(displayName, email);
+        Call<String> call = api.createUserInDatabase(user);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("AnimeRepository", "onResponse: " + response.body());
+                //User user = response.body();
+                //TODO: fix error when creating new user expected a string but was BEGIN_OBJECT
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("AnimeRepository", "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    public void wakeUp() {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<String> call = api.wakeUp();
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("AnimeRepository", "onResponse: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("AnimeRepository", "onFailure: " + t.getMessage());
+            }
+        });
+    }
 }

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.anikiwi.MainActivity;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.ActivityLoginBinding;
+import com.example.anikiwi.repositories.AnimeRepository;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private AuthStateListener mAuthStateListener;
 
+    private AnimeRepository animeRepository;
+
     private ActivityLoginBinding binding;
     private SignInButton btnLoginWithGoogle;
 
@@ -45,6 +48,9 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase Authentication
         mAuth = FirebaseAuth.getInstance();
 
+        // Initialize AnimeRepository
+        animeRepository = AnimeRepository.getInstance();
+        animeRepository.wakeUp();
         // Initialize views
         btnLoginWithGoogle = binding.googleButton;
 
@@ -122,7 +128,11 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign-in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            // You can store additional user information in your database here if needed
+
+                            // Make an API call to create the user in the database
+                            if (user != null) {
+                                animeRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
+                            }
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish(); // Close the login activity
                         } else {
@@ -134,5 +144,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
     
 }
