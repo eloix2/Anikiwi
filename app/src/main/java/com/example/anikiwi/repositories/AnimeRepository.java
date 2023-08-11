@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.RetrofitClient;
+import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.User;
 
 import java.util.List;
@@ -84,27 +85,32 @@ public class AnimeRepository {
         APIs api = RetrofitClient.getInstance().getApis();
         User user = new User(displayName, email);
         Call<User> call = api.createUserInDatabase(user);
-        call.enqueue(new Callback<User>() {
+        RetryQueue<User> retryQueue = new RetryQueue<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if(response.isSuccessful()){
-                    Log.d("AnimeRepository", "onResponse: " + response.body());
-                }
-                else if (response.code() == 409) {
-                    Log.d("AnimeRepository", "onResponse: " + response.body());
-                }
-                else {
-                    Log.d("AnimeRepository", "onResponse: " + response.body());
-                }
-
-                //User user = response.body();
+            protected void handleSuccess(User response) {
+                Log.d("AnimeRepository", "User created: " + response);
+                // Handle success
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d("AnimeRepository", "onFailure: " + t.getMessage());
+            protected void handleConflictError() {
+                Log.d("AnimeRepository", "User creation failed: Conflict - User already exists");
+                // Handle conflict error
             }
-        });
+
+            @Override
+            protected void handleOtherError(int errorCode) {
+                Log.d("MyRepository", "User creation failed: Error code " + errorCode);
+                // Handle other errors
+            }
+
+            @Override
+            protected void handleFailure(String errorMessage) {
+                Log.d("MyRepository", "User creation failed: " + errorMessage);
+                // Handle failure
+            }
+        };
+        retryQueue.enqueue(call);
     }
 
     public void wakeUp() {
@@ -113,7 +119,7 @@ public class AnimeRepository {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("AnimeRepository", "onResponse: " + response.body().toString());
+                Log.d("AnimeRepository", "onResponse: " + response.body());
             }
 
             @Override
