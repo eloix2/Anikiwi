@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.ActivityAnimeDataBinding;
@@ -29,13 +30,29 @@ public class AnimeDataActivity extends AppCompatActivity {
         binding = ActivityAnimeDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        //add back button
+        // Add back button
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         binding.textViewTitle.setText(getIntent().getStringExtra("anime_title"));
+
+        String animeId = getIntent().getStringExtra("anime_id");
+
+        // Initialize ViewModel
+        animeDataViewModel = new ViewModelProvider(this).get(AnimeDataViewModel.class);
+        animeDataViewModel.init(animeId); // Pass anime ID to ViewModel
+
+        // Observe LiveData for anime data changes
+        animeDataViewModel.getAnimeData().observe(this, animeData -> {
+            if (animeData != null) {
+                // Update UI with anime data
+                binding.textViewTitle.setText(animeData.getTitle());
+                // Update other UI elements with relevant data
+            }
+        });
+    }
 
 
         //animeDataViewModel = new ViewModelProvider(this).get(AnimeDataViewModel.class);
@@ -46,7 +63,6 @@ public class AnimeDataActivity extends AppCompatActivity {
 
             //}
         //});
-    }
 
     //add back button functionality replicating the behaviour of real android back button
     @Override
