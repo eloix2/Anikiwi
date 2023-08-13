@@ -12,6 +12,7 @@ import com.example.anikiwi.MainActivity;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.ActivityLoginBinding;
 import com.example.anikiwi.repositories.AnimeRepository;
+import com.example.anikiwi.repositories.UserRepository;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private AuthStateListener mAuthStateListener;
 
-    private AnimeRepository animeRepository;
+    private UserRepository userRepository;
 
     private ActivityLoginBinding binding;
     private SignInButton btnLoginWithGoogle;
@@ -48,9 +49,10 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase Authentication
         mAuth = FirebaseAuth.getInstance();
 
-        // Initialize AnimeRepository
-        animeRepository = AnimeRepository.getInstance();
-        animeRepository.wakeUp();
+        // Initialize UserRepository
+        userRepository = UserRepository.getInstance();
+        userRepository.wakeUp();
+
         // Initialize views
         btnLoginWithGoogle = binding.googleButton;
 
@@ -75,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in, add user to database if not already added
-                    AnimeRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
+                    UserRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
                     // Start main activity
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish(); // Close the login activity
@@ -132,13 +134,13 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Make an API call to create the user in the database
                             if (user != null) {
-                                animeRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
+                                UserRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
                             }
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish(); // Close the login activity
                         } else {
                             // Sign-in failed, handle the error
-                            // For example, you can show an error message
+                            // Show an error message
                             Toast toast = Toast.makeText(getApplicationContext(), "Sign in failed", Toast.LENGTH_SHORT);
                             toast.show();
                         }

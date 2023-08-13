@@ -2,7 +2,6 @@ package com.example.anikiwi.repositories;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.anikiwi.networking.APIs;
@@ -11,6 +10,7 @@ import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.User;
 
+import java.util.AbstractCollection;
 import java.util.List;
 
 import retrofit2.Call;
@@ -22,6 +22,8 @@ public class AnimeRepository {
     //singleton
     private static AnimeRepository instance;
     private static MutableLiveData<List<Anime>> animes = new MutableLiveData<>();
+
+    private static MutableLiveData<Anime> anime = new MutableLiveData<>();
 
     public static AnimeRepository getInstance() {
         if (instance == null) {
@@ -36,12 +38,12 @@ public class AnimeRepository {
     }
 
     public MutableLiveData<List<Anime>> getAnimes() {
-        makeApiCall();
+        makeAnimeApiCall();
         //Log.d("AnimeRepository", "getAnimes: " + animes.toString());
         return animes;
     }
 
-    public void makeApiCall() {
+    public void makeAnimeApiCall() {
         APIs api = RetrofitClient.getInstance().getApis();
         Call<List<Anime>> call = api.getAnimes();
         call.enqueue(new Callback<List<Anime>>() {
@@ -80,51 +82,23 @@ public class AnimeRepository {
         });
     }
 
-    public static void createUserInDatabase(String displayName, String email) {
-        //TODO: recuerda tener en cuenta que la api esta siempre caida al inicio
-        APIs api = RetrofitClient.getInstance().getApis();
-        User user = new User(displayName, email);
-        Call<User> call = api.createUserInDatabase(user);
-        RetryQueue<User> retryQueue = new RetryQueue<User>() {
-            @Override
-            protected void handleSuccess(User response) {
-                Log.d("AnimeRepository", "User created: " + response);
-                // Handle success
-            }
-
-            @Override
-            protected void handleConflictError() {
-                Log.d("AnimeRepository", "User creation failed: Conflict - User already exists");
-                // Handle conflict error
-            }
-
-            @Override
-            protected void handleOtherError(int errorCode) {
-                Log.d("MyRepository", "User creation failed: Error code " + errorCode);
-                // Handle other errors
-            }
-
-            @Override
-            protected void handleFailure(String errorMessage) {
-                Log.d("MyRepository", "User creation failed: " + errorMessage);
-                // Handle failure
-            }
-        };
-        retryQueue.enqueue(call);
+    public MutableLiveData<Anime> getAnime(String animeId) {
+        getAnimeApiCall(animeId);
+        return anime;
     }
 
-    public void wakeUp() {
+    public void getAnimeApiCall(String animeId){
         APIs api = RetrofitClient.getInstance().getApis();
-        Call<String> call = api.wakeUp();
-        call.enqueue(new Callback<String>() {
+        Call<Anime> call = api.getAnime(animeId);
+        call.enqueue(new Callback<Anime>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("AnimeRepository", "onResponse: " + response.body());
+            public void onResponse(Call<Anime> call, Response<Anime> response) {
+                anime.postValue(response.body());
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d("AnimeRepository", "onFailure: " + t.getMessage());
+            public void onFailure(Call<Anime> call, Throwable t) {
+                anime.postValue(null);
             }
         });
     }
