@@ -5,32 +5,22 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.repositories.AnimeRepository;
 
 public class AnimeDataViewModel extends ViewModel {
     private MutableLiveData<Anime> animeDataLiveData;
 
+    private AnimeRepository animeRepository;
     // Inject API service here
 
     public void init(String animeId) {
         if (animeDataLiveData != null) {
             return; // ViewModel already initialized
         }
+        animeRepository = AnimeRepository.getInstance();
         animeDataLiveData = new MutableLiveData<>();
+        animeDataLiveData = animeRepository.getAnime(animeId);
 
-        // Fetch anime data from API using animeId and update LiveData
-        // Replace this with API call to fetch anime data by ID
-        // For example:
-        // ApiService.getInstance().getAnimeById(animeId, new Callback<AnimeData>() {
-        //     @Override
-        //     public void onResponse(Call<AnimeData> call, Response<AnimeData> response) {
-        //         animeDataLiveData.setValue(response.body());
-        //     }
-        //
-        //     @Override
-        //     public void onFailure(Call<AnimeData> call, Throwable t) {
-        //         // Handle error
-        //     }
-        // });
     }
 
     public LiveData<Anime> getAnimeData() {
