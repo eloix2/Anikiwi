@@ -1,11 +1,15 @@
 package com.example.anikiwi.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.RetrofitClient;
+import com.example.anikiwi.networking.RetryQueue;
+import com.example.anikiwi.networking.User;
 
 import java.util.List;
 
@@ -76,4 +80,52 @@ public class AnimeRepository {
         });
     }
 
+    public static void createUserInDatabase(String displayName, String email) {
+        //TODO: recuerda tener en cuenta que la api esta siempre caida al inicio
+        APIs api = RetrofitClient.getInstance().getApis();
+        User user = new User(displayName, email);
+        Call<User> call = api.createUserInDatabase(user);
+        RetryQueue<User> retryQueue = new RetryQueue<User>() {
+            @Override
+            protected void handleSuccess(User response) {
+                Log.d("AnimeRepository", "User created: " + response);
+                // Handle success
+            }
+
+            @Override
+            protected void handleConflictError() {
+                Log.d("AnimeRepository", "User creation failed: Conflict - User already exists");
+                // Handle conflict error
+            }
+
+            @Override
+            protected void handleOtherError(int errorCode) {
+                Log.d("MyRepository", "User creation failed: Error code " + errorCode);
+                // Handle other errors
+            }
+
+            @Override
+            protected void handleFailure(String errorMessage) {
+                Log.d("MyRepository", "User creation failed: " + errorMessage);
+                // Handle failure
+            }
+        };
+        retryQueue.enqueue(call);
+    }
+
+    public void wakeUp() {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<String> call = api.wakeUp();
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("AnimeRepository", "onResponse: " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("AnimeRepository", "onFailure: " + t.getMessage());
+            }
+        });
+    }
 }

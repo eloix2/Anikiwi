@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Title TextView at the top, centered -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:text="Anikiwi"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <!-- Image below the title, centered -->
+    <ImageView
+        android:id="@+id/kiwi_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/textViewTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/kiwi" />
+
+    <!-- TODO: Style this view -->
+    <!-- Button to login with Google, centered in the middle -->
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_button"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/kiwi_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:text="Text"
+        android:textSize="18sp" />
+
+
+</RelativeLayout>
