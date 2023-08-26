@@ -30,7 +30,7 @@ public class AnimeViewModel extends ViewModel {
     }
 
     public void refreshAnimes() {
-        animeRepository.makeApiCall();
+        animeRepository.makeAnimeApiCall();
     }
     public LiveData<List<Anime>> getAnimesObserver() {
         return animes;

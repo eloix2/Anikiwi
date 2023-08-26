@@ -6,15 +6,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <!-- Upper Background Image -->
     <ImageView
         android:id="@+id/imageViewBackground"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background" /> <!-- Replace with your anime background image -->
+        android:src="@drawable/ic_launcher_background" />
 
+    <!-- Upper Background Image -->
+    <ImageView
+        android:id="@+id/imageViewPortrait"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="120dp"
+        android:src="@drawable/ic_launcher_background" />
+</RelativeLayout>
     <!-- Anime Title -->
     <TextView
         android:id="@+id/textViewTitle"
@@ -38,5 +50,66 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:lineSpacingExtra="4dp" />
+
+    <!-- Anime Score -->
+    <TextView
+        android:id="@+id/textViewScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anime Score"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp" />
+
+    <!-- Anime Episodes -->
+    <TextView
+        android:id="@+id/textViewEpisodes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anime Episodes"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp" />
+
+    <!-- Anime Type -->
+    <TextView
+        android:id="@+id/textViewType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anime Type"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp" />
+
+    <!-- Anime Status -->
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anime Status"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp" />
+
+    <!-- Anime Season And Year-->
+    <TextView
+        android:id="@+id/textViewSeasonYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anime Season And Year"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp" />
+
 
 </LinearLayout>

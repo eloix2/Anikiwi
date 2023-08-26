@@ -66,4 +66,8 @@ public class Anime {
     public String[] getTags() {
         return tags;
     }
+
+    public String getSeasonAndYear() {
+        return season + " " + year;
+    }
 }

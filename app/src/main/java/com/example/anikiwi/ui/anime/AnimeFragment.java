@@ -106,7 +106,8 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         //intent a la activity de anime pasando el anime
 
         Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);
-        intent.putExtra("anime_title", anime.getTitle()); // Example: pass anime title to the details activity
+        intent.putExtra("anime_id", anime.getId()); // Pass anime id to the details activity
+        intent.putExtra("anime_title", anime.getTitle()); // Pass anime title to the details activity
         // Add other data you want to pass to the AnimeDetailsActivity
         this.requireContext().startActivity(intent);
 
