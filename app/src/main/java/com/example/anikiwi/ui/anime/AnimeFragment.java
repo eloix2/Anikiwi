@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,13 +17,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.anikiwi.MainActivity;
+import com.example.anikiwi.R;
 import com.example.anikiwi.adapter.AnimeAdapter;
 import com.example.anikiwi.databinding.FragmentAnimeBinding;
 import com.example.anikiwi.networking.Anime;
@@ -43,6 +52,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         AnimeViewModel animeViewModel =
                 new ViewModelProvider(this).get(AnimeViewModel.class);
         animeViewModel.init();
@@ -52,21 +62,52 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         floatingActionButtonRetry = binding.fabRetry;
         noResult = binding.tvErrorAnime;
         progressBar = binding.pbAnime;
-        floatingActionButtonRetry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: mirar que esto funcione update: parece que funciona
-                progressBar.setVisibility(View.VISIBLE);
-                floatingActionButtonRetry.setVisibility(View.GONE);
-                noResult.setVisibility(View.GONE);
-                animeViewModel.refreshAnimes();
-            }
+
+        // Custom Toolbar
+        setFragmentToolbar(root);
+        setToolbarMenu();
+
+        // Retry button
+        floatingActionButtonRetry.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+            floatingActionButtonRetry.setVisibility(View.GONE);
+            noResult.setVisibility(View.GONE);
+            animeViewModel.refreshAnimes();
         });
 
         initObserver(animeViewModel);
         initRecyclerView();
         initScrollListener(animeViewModel);
         return root;
+    }
+
+    // Sets the toolbar for the fragment
+    private void setFragmentToolbar(View root) {
+        // Find the Toolbar in the fragment's layout
+        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
+        toolbar.setTitle("Animes");
+        // Set the Toolbar as the ActionBar
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+    }
+    // Sets the menu for the toolbar
+    private void setToolbarMenu() {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.toolbar_menu, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                // Add else ifs for other menu items here
+                if (menuItem.getItemId() == R.id.action_search) {
+                    // Handle search icon press
+                    Toast.makeText(getContext(), "Search icon pressed", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
     private void initObserver(AnimeViewModel animeViewModel){

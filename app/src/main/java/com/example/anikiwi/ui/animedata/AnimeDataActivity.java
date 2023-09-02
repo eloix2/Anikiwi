@@ -2,10 +2,12 @@ package com.example.anikiwi.ui.animedata;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +28,7 @@ public class AnimeDataActivity extends AppCompatActivity {
         binding = ActivityAnimeDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        setActivityToolbar(binding.getRoot());
         // Add back button
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -65,6 +68,14 @@ public class AnimeDataActivity extends AppCompatActivity {
 
             }
         });
+    }
+    // Sets the toolbar for the fragment
+    private void setActivityToolbar(View root) {
+        // Find the Toolbar in the fragment's layout
+        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
+        toolbar.setTitle("Anime Data");
+        // Set the Toolbar as the ActionBar
+        (this).setSupportActionBar(toolbar);
     }
 
     //add back button functionality replicating the behaviour of real android back button

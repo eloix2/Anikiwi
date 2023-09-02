@@ -9,4 +9,6 @@
     <string name="no_result_found">NO RESULT FOUND</string>
     <string name="retry">Retry</string>
     <string name="logout">Logout</string>
+    <string name="search">Search</string>
+    <string name="anikiwi">Anikiwi</string>
 </resources>
