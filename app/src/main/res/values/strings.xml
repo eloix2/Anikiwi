@@ -11,4 +11,35 @@
     <string name="logout">Logout</string>
     <string name="search">Search</string>
     <string name="anikiwi">Anikiwi</string>
+    <string name="nombre">Nombre</string>
+    <string name="name">Name</string>
+    <string name="year">Year</string>
+    <string name="title">Title</string>
+    <string name="type">Type</string>
+    <string name="status">Status</string>
+    <string name="season">Season</string>
+    <string name="filters">Filters</string>
+    <string-array name="seasons_array">
+        <item />
+        <item>Spring</item>
+        <item>Summer</item>
+        <item>Winter</item>
+        <item>Fall</item>
+    </string-array>
+    <string-array name="types_array">
+        <item />
+        <item>Tv</item>
+        <item>Movie</item>
+        <item>Ova</item>
+        <item>Ona</item>
+        <item>Special</item>
+        <item>Unknown</item>
+    </string-array>
+    <string-array name="status_array">
+        <item />
+        <item>Finished</item>
+        <item>Ongoing</item>
+        <item>Upcoming</item>
+        <item>Unknown</item>
+    </string-array>
 </resources>

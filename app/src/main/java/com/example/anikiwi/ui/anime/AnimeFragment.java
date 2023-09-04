@@ -1,5 +1,6 @@
 package com.example.anikiwi.ui.anime;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,13 +11,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
@@ -103,6 +108,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                 if (menuItem.getItemId() == R.id.action_search) {
                     // Handle search icon press
                     Toast.makeText(getContext(), "Search icon pressed", Toast.LENGTH_SHORT).show();
+                    showCustomDialog();
                     return true;
                 }
                 return false;
@@ -196,4 +202,63 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         });
 
     }
+
+    public void showCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_layout, null);
+        builder.setView(dialogView);
+
+        EditText editTextName = dialogView.findViewById(R.id.editTextTitle);
+        EditText editTextYear = dialogView.findViewById(R.id.editTextYear);
+
+        // Lists of seasons, types and statuses
+        Spinner spinnerSeasons = dialogView.findViewById(R.id.spinnerSeason);
+        Spinner spinnerTypes = dialogView.findViewById(R.id.spinnerType);
+        Spinner spinnerStatus = dialogView.findViewById(R.id.spinnerStatus);
+
+        // Creates ArrayAdapters to populate the Spinners with seasons, types and statuses
+        ArrayAdapter<CharSequence> adapterSeason = ArrayAdapter.createFromResource(this.requireContext(),
+                R.array.seasons_array, android.R.layout.simple_spinner_item);
+
+        adapterSeason.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(this.requireContext(),
+                R.array.types_array, android.R.layout.simple_spinner_item);
+
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ArrayAdapter<CharSequence> adapterStatus = ArrayAdapter.createFromResource(this.requireContext(),
+                R.array.status_array, android.R.layout.simple_spinner_item);
+
+        adapterStatus.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Set the adapter to the Spinner
+        spinnerSeasons.setAdapter(adapterSeason);
+        spinnerTypes.setAdapter(adapterType);
+        spinnerStatus.setAdapter(adapterStatus);
+
+        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = editTextName.getText().toString();
+                String year = editTextYear.getText().toString();
+                String selectedSeason = spinnerSeasons.getSelectedItem().toString();
+
+                // Realiza acciones con los datos ingresados por el usuario
+                // por ejemplo, puedes mostrar estos valores en un TextView o hacer algo más con ellos
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel(); // Cierra el diálogo si se presiona "Cancelar"
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 }
