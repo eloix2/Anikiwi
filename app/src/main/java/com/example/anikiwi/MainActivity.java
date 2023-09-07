@@ -2,6 +2,7 @@ package com.example.anikiwi;
 
 import android.os.Bundle;
 
+import com.example.anikiwi.ui.anime.AnimeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,8 +31,11 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_watching, R.id.navigation_anime, R.id.navigation_profile)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // Esta linea nauseabunda ha causado que mi app se rompa por 7 horas
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
+
+
 
 }

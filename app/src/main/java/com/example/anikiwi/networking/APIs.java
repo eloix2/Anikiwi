@@ -1,6 +1,7 @@
 package com.example.anikiwi.networking;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -8,6 +9,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface APIs {
     String BASE_URL = "https://anikiwi-api.onrender.com/api/";
@@ -15,8 +17,10 @@ public interface APIs {
     @GET("animes/search?year=2023&page=1&limit=50")
     Call<List<Anime>> getAnimes();
 
-    @GET("animes/search?year=2023&limit=50")
-    Call<List<Anime>> getAnimes2(@Query("page") int pageNumber);
+    @GET("animes/search?limit=50&year=2023{query}")
+    Call<List<Anime>> getAnimes2(@Query("page") int pageNumber, @Path("query") String query);
+    @GET("animes/search")
+    Call<List<Anime>> getAnimesQuery(@QueryMap Map<String, Object> queryParams);
 
     @GET("state")
     Call<String> wakeUp();
@@ -26,4 +30,7 @@ public interface APIs {
 
     @GET("animes/search/{id}")
     Call<Anime> getAnime(@Path("id") String id);
+
+    //@GET("animes/search/limit=50")
+    //Call<List<Anime>> filterAnimes(@Query("page") String text);
 }

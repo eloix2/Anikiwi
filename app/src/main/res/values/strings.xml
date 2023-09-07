@@ -9,4 +9,37 @@
     <string name="no_result_found">NO RESULT FOUND</string>
     <string name="retry">Retry</string>
     <string name="logout">Logout</string>
+    <string name="search">Search</string>
+    <string name="anikiwi">Anikiwi</string>
+    <string name="nombre">Nombre</string>
+    <string name="name">Name</string>
+    <string name="year">Year</string>
+    <string name="title">Title</string>
+    <string name="type">Type</string>
+    <string name="status">Status</string>
+    <string name="season">Season</string>
+    <string name="filters">Filters</string>
+    <string-array name="seasons_array">
+        <item />
+        <item>SPRING</item>
+        <item>SUMMER</item>
+        <item>WINTER</item>
+        <item>FALL</item>
+    </string-array>
+    <string-array name="types_array">
+        <item />
+        <item>TV</item>
+        <item>MOVIE</item>
+        <item>OVA</item>
+        <item>ONA</item>
+        <item>SPECIAL</item>
+        <item>UNKNOWN</item>
+    </string-array>
+    <string-array name="status_array">
+        <item />
+        <item>FINISHED</item>
+        <item>ONGOING</item>
+        <item>UPCOMING</item>
+        <item>UNKNOWN</item>
+    </string-array>
 </resources>

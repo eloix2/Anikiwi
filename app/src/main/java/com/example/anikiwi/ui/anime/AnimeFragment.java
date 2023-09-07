@@ -1,26 +1,40 @@
 package com.example.anikiwi.ui.anime;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.anikiwi.MainActivity;
+import com.example.anikiwi.R;
 import com.example.anikiwi.adapter.AnimeAdapter;
 import com.example.anikiwi.databinding.FragmentAnimeBinding;
 import com.example.anikiwi.networking.Anime;
@@ -28,7 +42,9 @@ import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickListener {
@@ -40,10 +56,13 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
     TextView noResult;
+    private AnimeViewModel animeViewModel;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AnimeViewModel animeViewModel =
+
+        animeViewModel =
                 new ViewModelProvider(this).get(AnimeViewModel.class);
         animeViewModel.init();
 
@@ -52,21 +71,53 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         floatingActionButtonRetry = binding.fabRetry;
         noResult = binding.tvErrorAnime;
         progressBar = binding.pbAnime;
-        floatingActionButtonRetry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: mirar que esto funcione update: parece que funciona
-                progressBar.setVisibility(View.VISIBLE);
-                floatingActionButtonRetry.setVisibility(View.GONE);
-                noResult.setVisibility(View.GONE);
-                animeViewModel.refreshAnimes();
-            }
+
+        // Custom Toolbar
+        setFragmentToolbar(root);
+        setToolbarMenu();
+
+        // Retry button
+        floatingActionButtonRetry.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+            floatingActionButtonRetry.setVisibility(View.GONE);
+            noResult.setVisibility(View.GONE);
+            animeViewModel.refreshAnimes();
         });
 
         initObserver(animeViewModel);
         initRecyclerView();
         initScrollListener(animeViewModel);
         return root;
+    }
+
+    // Sets the toolbar for the fragment
+    private void setFragmentToolbar(View root) {
+        // Find the Toolbar in the fragment's layout
+        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
+        toolbar.setTitle("Animes");
+        // Set the Toolbar as the ActionBar
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+    }
+    // Sets the menu for the toolbar
+    private void setToolbarMenu() {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.toolbar_menu, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                // Add else ifs for other menu items here
+                if (menuItem.getItemId() == R.id.action_search) {
+                    // Handle search icon press
+                    Toast.makeText(getContext(), "Search icon pressed", Toast.LENGTH_SHORT).show();
+                    showCustomDialog();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
     private void initObserver(AnimeViewModel animeViewModel){
@@ -155,4 +206,88 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         });
 
     }
+
+    public void showCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_layout, null);
+        builder.setView(dialogView);
+
+        EditText editTextTitle = dialogView.findViewById(R.id.editTextTitle);
+        EditText editTextYear = dialogView.findViewById(R.id.editTextYear);
+
+        // Lists of seasons, types and statuses
+        Spinner spinnerSeasons = dialogView.findViewById(R.id.spinnerSeason);
+        Spinner spinnerTypes = dialogView.findViewById(R.id.spinnerType);
+        Spinner spinnerStatus = dialogView.findViewById(R.id.spinnerStatus);
+
+        // Creates ArrayAdapters to populate the Spinners with seasons, types and statuses
+        ArrayAdapter<CharSequence> adapterSeason = ArrayAdapter.createFromResource(this.requireContext(),
+                R.array.seasons_array, android.R.layout.simple_spinner_item);
+
+        adapterSeason.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(this.requireContext(),
+                R.array.types_array, android.R.layout.simple_spinner_item);
+
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ArrayAdapter<CharSequence> adapterStatus = ArrayAdapter.createFromResource(this.requireContext(),
+                R.array.status_array, android.R.layout.simple_spinner_item);
+
+        adapterStatus.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Set the adapter to the Spinner
+        spinnerSeasons.setAdapter(adapterSeason);
+        spinnerTypes.setAdapter(adapterType);
+        spinnerStatus.setAdapter(adapterStatus);
+
+        // Set the values of the fields that are saved from the last search
+        editTextTitle.setText(animeViewModel.getSavedQuery("title"));
+        editTextYear.setText(animeViewModel.getSavedQuery("year"));
+        spinnerSeasons.setSelection(adapterSeason.getPosition(animeViewModel.getSavedQuery("season")));
+        spinnerTypes.setSelection(adapterType.getPosition(animeViewModel.getSavedQuery("type")));
+        spinnerStatus.setSelection(adapterStatus.getPosition(animeViewModel.getSavedQuery("status")));
+
+        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = editTextTitle.getText().toString();
+                String year = editTextYear.getText().toString();
+                String selectedSeason = spinnerSeasons.getSelectedItem().toString();
+                String selectedTypes = spinnerTypes.getSelectedItem().toString();
+                String selectedStatus = spinnerStatus.getSelectedItem().toString();
+
+                // TODO: Add tag filter functionality
+
+                // Realiza acciones con los datos ingresados por el usuario
+                // Llamar a la API
+                Map<String, Object> queryParams = new HashMap<>();
+                if(!title.isEmpty())
+                    queryParams.put("title", title);
+                if(!year.isEmpty())
+                    queryParams.put("year", year);
+                if(!selectedSeason.isEmpty())
+                    queryParams.put("season", selectedSeason);
+                if(!selectedTypes.isEmpty())
+                    queryParams.put("type", selectedTypes);
+                if(!selectedStatus.isEmpty())
+                    queryParams.put("status", selectedStatus);
+
+                animeViewModel.filterAnimes(queryParams);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel(); // Cierra el diálogo si se presiona "Cancelar"
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 }
