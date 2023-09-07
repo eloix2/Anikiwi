@@ -21,25 +21,25 @@
     <string name="filters">Filters</string>
     <string-array name="seasons_array">
         <item />
-        <item>Spring</item>
-        <item>Summer</item>
-        <item>Winter</item>
-        <item>Fall</item>
+        <item>SPRING</item>
+        <item>SUMMER</item>
+        <item>WINTER</item>
+        <item>FALL</item>
     </string-array>
     <string-array name="types_array">
         <item />
-        <item>Tv</item>
-        <item>Movie</item>
-        <item>Ova</item>
-        <item>Ona</item>
-        <item>Special</item>
-        <item>Unknown</item>
+        <item>TV</item>
+        <item>MOVIE</item>
+        <item>OVA</item>
+        <item>ONA</item>
+        <item>SPECIAL</item>
+        <item>UNKNOWN</item>
     </string-array>
     <string-array name="status_array">
         <item />
-        <item>Finished</item>
-        <item>Ongoing</item>
-        <item>Upcoming</item>
-        <item>Unknown</item>
+        <item>FINISHED</item>
+        <item>ONGOING</item>
+        <item>UPCOMING</item>
+        <item>UNKNOWN</item>
     </string-array>
 </resources>

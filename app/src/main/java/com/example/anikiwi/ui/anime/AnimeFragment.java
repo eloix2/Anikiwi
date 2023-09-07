@@ -42,7 +42,9 @@ import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickListener {
@@ -54,11 +56,13 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
     TextView noResult;
+    private AnimeViewModel animeViewModel;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        AnimeViewModel animeViewModel =
+        animeViewModel =
                 new ViewModelProvider(this).get(AnimeViewModel.class);
         animeViewModel.init();
 
@@ -209,7 +213,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         View dialogView = inflater.inflate(R.layout.dialog_layout, null);
         builder.setView(dialogView);
 
-        EditText editTextName = dialogView.findViewById(R.id.editTextTitle);
+        EditText editTextTitle = dialogView.findViewById(R.id.editTextTitle);
         EditText editTextYear = dialogView.findViewById(R.id.editTextYear);
 
         // Lists of seasons, types and statuses
@@ -238,15 +242,40 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         spinnerTypes.setAdapter(adapterType);
         spinnerStatus.setAdapter(adapterStatus);
 
+        // Set the values of the fields that are saved from the last search
+        editTextTitle.setText(animeViewModel.getSavedQuery("title"));
+        editTextYear.setText(animeViewModel.getSavedQuery("year"));
+        spinnerSeasons.setSelection(adapterSeason.getPosition(animeViewModel.getSavedQuery("season")));
+        spinnerTypes.setSelection(adapterType.getPosition(animeViewModel.getSavedQuery("type")));
+        spinnerStatus.setSelection(adapterStatus.getPosition(animeViewModel.getSavedQuery("status")));
+
         builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String name = editTextName.getText().toString();
+                String title = editTextTitle.getText().toString();
                 String year = editTextYear.getText().toString();
                 String selectedSeason = spinnerSeasons.getSelectedItem().toString();
+                String selectedTypes = spinnerTypes.getSelectedItem().toString();
+                String selectedStatus = spinnerStatus.getSelectedItem().toString();
+
+                // TODO: Add tag filter functionality
 
                 // Realiza acciones con los datos ingresados por el usuario
-                // por ejemplo, puedes mostrar estos valores en un TextView o hacer algo más con ellos
+                // Llamar a la API
+                Map<String, Object> queryParams = new HashMap<>();
+                if(!title.isEmpty())
+                    queryParams.put("title", title);
+                if(!year.isEmpty())
+                    queryParams.put("year", year);
+                if(!selectedSeason.isEmpty())
+                    queryParams.put("season", selectedSeason);
+                if(!selectedTypes.isEmpty())
+                    queryParams.put("type", selectedTypes);
+                if(!selectedStatus.isEmpty())
+                    queryParams.put("status", selectedStatus);
+
+                animeViewModel.filterAnimes(queryParams);
+                adapter.notifyDataSetChanged();
             }
         });
 

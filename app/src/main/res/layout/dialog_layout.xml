@@ -21,14 +21,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/title"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:inputType="text"
+        android:autofillHints="Titles" />
 
     <EditText
         android:id="@+id/editTextYear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/year"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:inputType="number"
+        android:autofillHints="Years"/>
 
     <!-- space -->
     <Space
