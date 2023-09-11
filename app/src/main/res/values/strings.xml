@@ -19,6 +19,8 @@
     <string name="status">Status</string>
     <string name="season">Season</string>
     <string name="filters">Filters</string>
+    <string name="rate_anime">Rate Anime</string>
+    <string name="enter_date">Enter date</string>
     <string-array name="seasons_array">
         <item />
         <item>SPRING</item>
@@ -41,5 +43,24 @@
         <item>ONGOING</item>
         <item>UPCOMING</item>
         <item>UNKNOWN</item>
+    </string-array>
+    <string-array name="rate_status_array">
+        <item>Watching</item>
+        <item>Completed</item>
+        <item>Planning</item>
+        <item>Dropped</item>
+    </string-array>
+    <string-array name="scores_array">
+        <item />
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
     </string-array>
 </resources>
