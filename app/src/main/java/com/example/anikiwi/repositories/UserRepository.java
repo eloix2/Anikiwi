@@ -8,10 +8,15 @@ import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
+import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.networking.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,6 +25,7 @@ public class UserRepository {
 
     //singleton
     private static UserRepository instance;
+    private static SessionManager sessionManager;
 
     public static UserRepository getInstance() {
         if (instance == null) {
@@ -30,8 +36,8 @@ public class UserRepository {
     }
 
     private UserRepository() {
-        // TODO: Inicializar el user activo?
-        //user = new MutableLiveData<>();
+        // Inicializamos el sessionManager para settear el user activo
+        sessionManager = SessionManager.getInstance();
     }
 
     public static void createUserInDatabase(String displayName, String email) {
@@ -44,12 +50,33 @@ public class UserRepository {
             protected void handleSuccess(User response) {
                 Log.d("UserRepository", "User created: " + response);
                 // Handle success
+                // Assign the response to the active user
+                sessionManager.setActiveUser(response);
             }
 
             @Override
-            protected void handleConflictError() {
+            protected void handleConflictError(JSONObject errorBody) {
                 Log.d("UserRepository", "User creation failed: Conflict - User already exists");
                 // Handle conflict error
+                // Assign the errorBody to the active user
+                try {
+                    // Attempt to retrieve values from the errorBody
+                    String id = errorBody.getString("_id");
+                    String username = errorBody.getString("username");
+                    String email = errorBody.getString("email");
+
+                    // Create a User object with the retrieved values
+                    User user = new User(id, username, email);
+
+                    // Set the active user
+                    SessionManager.getInstance().setActiveUser(user);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Handle the JSONException, log an error, or provide user feedback as needed
+                }
+                sessionManager.setActiveUser(user);
+
             }
 
             @Override

@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.repositories.AnimeRepository;
+import com.example.anikiwi.repositories.UserRepository;
 
 public class AnimeDataViewModel extends ViewModel {
     private MutableLiveData<Anime> animeDataLiveData;
 
     private AnimeRepository animeRepository;
+
     // Inject API service here
 
     public void init(String animeId) {
@@ -28,4 +31,7 @@ public class AnimeDataViewModel extends ViewModel {
     }
 
 
+    public String getActiveUserId() {
+        return SessionManager.getInstance().getActiveUser().getId();
+    }
 }

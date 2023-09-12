@@ -3,13 +3,14 @@ package com.example.anikiwi.ui.animedata;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +23,9 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.ActivityAnimeDataBinding;
+import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.utilities.DateConverter;
+import com.example.anikiwi.utilities.InputFilterMinMax;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -77,7 +81,7 @@ public class AnimeDataActivity extends AppCompatActivity {
 
                 // Add button
                 binding.buttonRateAnime.setOnClickListener(v -> {
-                    showRateAnimeDialog();
+                    showRateAnimeDialog(animeData);
                 });
 
 
@@ -104,16 +108,29 @@ public class AnimeDataActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showRateAnimeDialog() {
+    public void showRateAnimeDialog(Anime animeData) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_rate_anime, null);
         builder.setView(dialogView);
 
-        EditText startingDayEditText = dialogView.findViewById(R.id.editTextStartingDay);
-        EditText finishedDayEditText = dialogView.findViewById(R.id.editTextFinishedDay);
+        // Set the max Episodes using animeData
+        TextView textViewRateMaxEpisodes = dialogView.findViewById(R.id.textViewRateMaxEpisodes);
+        textViewRateMaxEpisodes.setText(animeData.getEpisodes());
 
-        startingDayEditText.setOnClickListener(v -> {
+        EditText editTextRateEpisodes  = dialogView.findViewById(R.id.editTextRateEpisodes);
+        EditText startingDateEditText = dialogView.findViewById(R.id.editTextStartingDate);
+        EditText finishedDateEditText = dialogView.findViewById(R.id.editTextFinishedDate);
+        EditText editTextRateScore = dialogView.findViewById(R.id.editTextRateScore);
+
+        // Set the filters for the number EditTexts
+
+        editTextRateEpisodes.setFilters(new InputFilter[]{ new InputFilterMinMax("0", animeData.getEpisodes()) });
+        editTextRateScore.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "10") });
+
+        // Set the onClickListeners for the Date EditTexts
+
+        startingDateEditText.setOnClickListener(v -> {
             // on below line we are getting
             // the instance of our calendar.
             final Calendar c = Calendar.getInstance();
@@ -128,7 +145,7 @@ public class AnimeDataActivity extends AppCompatActivity {
             DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                     (view, year1, monthOfYear, dayOfMonth) -> {
                         // on below line we are setting date to our edit text.
-                        startingDayEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1);
+                        startingDateEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1);
 
                     },
                     // on below line we are passing year,
@@ -139,7 +156,7 @@ public class AnimeDataActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        finishedDayEditText.setOnClickListener(v -> {
+        finishedDateEditText.setOnClickListener(v -> {
             // on below line we are getting
             // the instance of our calendar.
             final Calendar c = Calendar.getInstance();
@@ -154,7 +171,7 @@ public class AnimeDataActivity extends AppCompatActivity {
             DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                     (view, year1, monthOfYear, dayOfMonth) -> {
                         // on below line we are setting date to our edit text.
-                        finishedDayEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1);
+                        finishedDateEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1);
 
                     },
                     // on below line we are passing year,
@@ -168,24 +185,17 @@ public class AnimeDataActivity extends AppCompatActivity {
         //EditText editTextTitle = dialogView.findViewById(R.id.editTextTitle);
         //EditText editTextYear = dialogView.findViewById(R.id.editTextYear);
 
-        // Lists of seasons, types and statuses
+        // Lists of statuses
         Spinner spinnerRateStatus = dialogView.findViewById(R.id.spinnerRateStatus);
-        Spinner spinnerRateScore = dialogView.findViewById(R.id.spinnerRateScore);
 
-        // Creates ArrayAdapters to populate the Spinners with seasons, types and statuses
+        // Creates ArrayAdapters to populate the Spinners with statuses
         ArrayAdapter<CharSequence> adapterRateStatus = ArrayAdapter.createFromResource(this,
                 R.array.rate_status_array, android.R.layout.simple_spinner_item);
 
         adapterRateStatus.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        ArrayAdapter<CharSequence> adapterRateScores = ArrayAdapter.createFromResource(this,
-                R.array.scores_array, android.R.layout.simple_spinner_item);
-
-        adapterRateScores.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         // Set the adapter to the Spinner
         spinnerRateStatus.setAdapter(adapterRateStatus);
-        spinnerRateScore.setAdapter(adapterRateScores);
 
         //Todo: Llamar a la api para obtener los datos del rate activo y mostrarlos en el dialogo
 
@@ -199,18 +209,24 @@ public class AnimeDataActivity extends AppCompatActivity {
         builder.setPositiveButton("Rate", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-/*                String title = editTextTitle.getText().toString();
-                String year = editTextYear.getText().toString();
-                String selectedSeason = spinnerSeasons.getSelectedItem().toString();
-                String selectedTypes = spinnerTypes.getSelectedItem().toString();
-                String selectedStatus = spinnerStatus.getSelectedItem().toString();
+                // Get the active user Id and the anime Id
+                String userId = animeDataViewModel.getActiveUserId();
+                String animeId = animeData.getId();
 
-                // TODO: Add tag filter functionality
+                // Get the values of the fields
+                String rateStatus = spinnerRateStatus.getSelectedItem().toString();
+                String rateEpisodes = editTextRateEpisodes.getText().toString();
+                String rateScore = editTextRateScore.getText().toString();
+                String rateStartingDate = startingDateEditText.getText().toString();
+                String rateFinishedDate = finishedDateEditText.getText().toString();
 
-                // Realiza acciones con los datos ingresados por el usuario
+                //Convert date formats to the one used in the API
+                rateStartingDate = DateConverter.convertDateJavaToMongo(rateStartingDate);
+                rateFinishedDate = DateConverter.convertDateJavaToMongo(rateFinishedDate);
+
                 // Llamar a la API
                 Map<String, Object> queryParams = new HashMap<>();
-                if(!title.isEmpty())
+                /*if(!title.isEmpty())
                     queryParams.put("title", title);
                 if(!year.isEmpty())
                     queryParams.put("year", year);
@@ -219,10 +235,11 @@ public class AnimeDataActivity extends AppCompatActivity {
                 if(!selectedTypes.isEmpty())
                     queryParams.put("type", selectedTypes);
                 if(!selectedStatus.isEmpty())
-                    queryParams.put("status", selectedStatus);
+                    queryParams.put("status", selectedStatus);*/
 
-                animeViewModel.filterAnimes(queryParams);
-                adapter.notifyDataSetChanged();*/
+                //animeViewModel.filterAnimes(queryParams);
+                //adapter.notifyDataSetChanged();
+
             }
         });
 

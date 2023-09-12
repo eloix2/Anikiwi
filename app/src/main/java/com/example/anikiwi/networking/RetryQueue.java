@@ -2,10 +2,15 @@ package com.example.anikiwi.networking;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,7 +44,13 @@ public class RetryQueue<T> {
                 if (response.isSuccessful()) {
                     handleSuccess(response.body());
                 } else if (response.code() == 409) {
-                    handleConflictError();
+                    JSONObject errorBody = null;
+                    try {
+                        errorBody = new JSONObject(response.errorBody().string());
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                    handleConflictError(errorBody);
                 } else {
                     handleOtherError(response.code());
                 }
@@ -61,7 +72,7 @@ public class RetryQueue<T> {
         // To be implemented by subclasses
     }
 
-    protected void handleConflictError() {
+    protected void handleConflictError(JSONObject errorBody) {
         // To be implemented by subclasses
     }
 
