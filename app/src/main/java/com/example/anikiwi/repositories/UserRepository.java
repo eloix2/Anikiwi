@@ -66,16 +66,16 @@ public class UserRepository {
                     String email = errorBody.getString("email");
 
                     // Create a User object with the retrieved values
-                    User user = new User(id, username, email);
+                    User existingUser = new User(id, username, email);
 
                     // Set the active user
-                    SessionManager.getInstance().setActiveUser(user);
+                    SessionManager.getInstance().setActiveUser(existingUser);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     // Handle the JSONException, log an error, or provide user feedback as needed
                 }
-                sessionManager.setActiveUser(user);
+                //sessionManager.setActiveUser(user);
 
             }
 
