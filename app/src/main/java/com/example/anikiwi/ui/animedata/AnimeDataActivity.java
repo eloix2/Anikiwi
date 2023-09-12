@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -24,6 +25,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.ActivityAnimeDataBinding;
 import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.utilities.DateConverter;
 import com.example.anikiwi.utilities.InputFilterMinMax;
 
@@ -197,14 +199,17 @@ public class AnimeDataActivity extends AppCompatActivity {
         // Set the adapter to the Spinner
         spinnerRateStatus.setAdapter(adapterRateStatus);
 
-        //Todo: Llamar a la api para obtener los datos del rate activo y mostrarlos en el dialogo
-
-        // Set the values of the fields that are saved from the last search
-        //editTextTitle.setText(animeViewModel.getSavedQuery("title"));
-        //editTextYear.setText(animeViewModel.getSavedQuery("year"));
-        //spinnerSeasons.setSelection(adapterSeason.getPosition(animeViewModel.getSavedQuery("season")));
-        //spinnerTypes.setSelection(adapterType.getPosition(animeViewModel.getSavedQuery("type")));
-        //spinnerStatus.setSelection(adapterStatus.getPosition(animeViewModel.getSavedQuery("status")));
+        // Set the values of the fields with the data from the active rating
+        animeDataViewModel.getRatingData().observe(this, ratingData -> {
+            if (ratingData != null) {
+                // Update dialog with rating data
+                spinnerRateStatus.setSelection(adapterRateStatus.getPosition(ratingData.getWatchStatus()));
+                editTextRateEpisodes.setText(ratingData.getEpisodesWatched());
+                editTextRateScore.setText(ratingData.getScore());
+                startingDateEditText.setText(DateConverter.convertDateMongoToJava(ratingData.getStartingDate()));
+                finishedDateEditText.setText(DateConverter.convertDateMongoToJava(ratingData.getFinishedDate()));
+            }
+        });
 
         builder.setPositiveButton("Rate", new DialogInterface.OnClickListener() {
             @Override
@@ -225,21 +230,19 @@ public class AnimeDataActivity extends AppCompatActivity {
                 rateFinishedDate = DateConverter.convertDateJavaToMongo(rateFinishedDate);
 
                 // Llamar a la API
-                Map<String, Object> queryParams = new HashMap<>();
-                /*if(!title.isEmpty())
-                    queryParams.put("title", title);
-                if(!year.isEmpty())
-                    queryParams.put("year", year);
-                if(!selectedSeason.isEmpty())
-                    queryParams.put("season", selectedSeason);
-                if(!selectedTypes.isEmpty())
-                    queryParams.put("type", selectedTypes);
-                if(!selectedStatus.isEmpty())
-                    queryParams.put("status", selectedStatus);*/
 
-                //animeViewModel.filterAnimes(queryParams);
-                //adapter.notifyDataSetChanged();
+                if(rateEpisodes.isEmpty())
+                    rateEpisodes = "0";
 
+                if(rateScore.isEmpty())
+                    rateScore = null;
+
+                if(userId != null && !userId.isEmpty() && animeId != null && !animeId.isEmpty()){
+                    Rating rating = new Rating(userId, animeId, rateStatus, rateEpisodes, rateScore, rateStartingDate, rateFinishedDate);
+                    animeDataViewModel.rateAnime(rating);
+                }
+
+                Toast.makeText(getApplicationContext(), "Anime rated", Toast.LENGTH_SHORT).show();
             }
         });
 

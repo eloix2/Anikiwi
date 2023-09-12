@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.User;
@@ -118,4 +119,5 @@ public class AnimeRepository {
             }
         });
     }
+
 }

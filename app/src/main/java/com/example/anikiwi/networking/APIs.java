@@ -31,6 +31,12 @@ public interface APIs {
     @GET("animes/search/{id}")
     Call<Anime> getAnime(@Path("id") String id);
 
+    @POST("rate")
+    Call<Rating> rateAnime(@Body Rating rating);
+
+    @GET("ratings/{userId}/{animeId}")
+    Call<Rating> getRating(@Path("userId")String userId, @Path("animeId") String animeId);
+
     //@GET("animes/search/limit=50")
     //Call<List<Anime>> filterAnimes(@Query("page") String text);
 }
