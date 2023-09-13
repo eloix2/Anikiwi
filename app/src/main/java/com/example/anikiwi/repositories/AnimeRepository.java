@@ -25,7 +25,6 @@ public class AnimeRepository {
     //singleton
     private static AnimeRepository instance;
     private static MutableLiveData<List<Anime>> animes = new MutableLiveData<>();
-
     private static MutableLiveData<Anime> anime = new MutableLiveData<>();
 
     public static AnimeRepository getInstance() {
@@ -36,21 +35,24 @@ public class AnimeRepository {
         return instance;
     }
 
+    /**
+     * Initializes the AnimeRepository.
+     * Initializes the AnimeRepository by creating a new MutableLiveData for the animes list.
+     */
     private AnimeRepository() {
         animes = new MutableLiveData<>();
     }
 
+    /**
+     * Gets the animes list.
+     * @return the animes list
+     */
     public MutableLiveData<List<Anime>> getAnimes() {
-        //TODO: este map meterlo en una clase o algo aparte para reutilizarlo
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("year", 2023);
-        queryParams.put("page", 1);
-        queryParams.put("limit", 50);
-        makeAnimeApiCall(queryParams);
         //Log.d("AnimeRepository", "getAnimes: " + animes.toString());
         return animes;
     }
 
+    // This method is not used, but was useful before clearing the animes and loading more
     public void makeAnimeApiCall(Map<String, Object> queryParams) {
         APIs api = RetrofitClient.getInstance().getApis();
         Call<List<Anime>> call = api.getAnimesQuery(queryParams);
@@ -75,25 +77,26 @@ public class AnimeRepository {
         call.enqueue(new Callback<List<Anime>>() {
             @Override
             public void onResponse(Call<List<Anime>> call, Response<List<Anime>> response) {
-                //add the new data to the list
-                List<Anime> oldAnimes = animes.getValue();
-                //TODO: he eliminado el assert para que se añadan en caso de que sea null, a la espera a ver si da problemas y a ver si puedo eliminar el otro assert
-                //assert oldAnimes != null;
-                //este assert es peligroso
-                assert response.body() != null;
-                if(oldAnimes == null){
-                    oldAnimes = response.body();
-                } else {
-                    oldAnimes.addAll(response.body());
+                if(response.body() == null){
+                    Log.d("AnimeRepository", "LoadMore onResponse: response.body() == null");
+                    animes.postValue(null);
+                    return;
                 }
 
-                //oldAnimes.addAll(response.body());
+                List<Anime> oldAnimes = animes.getValue();
+                if(oldAnimes == null){
+                    Log.d("AnimeRepository", "LoadMore onResponse: oldAnimes == null so we create a new list");
+                    oldAnimes = response.body();
+                } else {
+                    Log.d("AnimeRepository", "LoadMore onResponse: oldAnimes != null so we add the new data to the list");
+                    oldAnimes.addAll(response.body());
+                }
                 animes.postValue(oldAnimes);
-
             }
 
             @Override
             public void onFailure(Call<List<Anime>> call, Throwable t) {
+                Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
                 animes.postValue(null);
             }
         });
@@ -120,4 +123,7 @@ public class AnimeRepository {
         });
     }
 
+    public void clearAnimeList() {
+        animes.postValue(null);
+    }
 }

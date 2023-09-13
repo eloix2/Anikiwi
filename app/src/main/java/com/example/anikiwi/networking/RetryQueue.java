@@ -16,7 +16,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RetryQueue<T> {
-    private static final int MAX_RETRIES = 5;
+    private static final int MAX_RETRIES = 15;
     private Queue<Call<T>> requestQueue;
 
     public RetryQueue() {
