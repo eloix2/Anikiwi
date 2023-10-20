@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.Rating;
+import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.RetrofitClient;
-import com.example.anikiwi.networking.User;
 
 import java.util.List;
 
@@ -28,6 +28,7 @@ public class RatingRepository {
 
     //private static MutableLiveData<List<Rating>> ratings = new MutableLiveData<>();
     private static MutableLiveData<Rating> rating = new MutableLiveData<>();
+    private static MutableLiveData<List<RatingWithAnime>> ratedAnimesLiveData = new MutableLiveData<>();
 
 
     public static RatingRepository getInstance() {
@@ -62,9 +63,9 @@ public class RatingRepository {
         });
     }
 
-    public MutableLiveData<Rating> getRating(String activeUserId, String animeId) {
+    public MutableLiveData<Rating> getRatingByUserIdAndAnimeId(String activeUserId, String animeId) {
         APIs api = RetrofitClient.getInstance().getApis();
-        Call<Rating> call = api.getRating(activeUserId, animeId);
+        Call<Rating> call = api.getRatingByUserIdAndAnimeId(activeUserId, animeId);
         call.enqueue(new Callback<Rating>() {
             @Override
             public void onResponse(Call<Rating> call, Response<Rating> response) {
@@ -79,5 +80,30 @@ public class RatingRepository {
             }
         });
         return rating;
+    }
+
+
+    public MutableLiveData<List<RatingWithAnime>> getAnimesRatedByUser(String userId) {
+
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<List<RatingWithAnime>> call = api.getAnimesRatedByUser(userId);
+        call.enqueue(new Callback<List<RatingWithAnime>>() {
+            @Override
+            public void onResponse(Call<List<RatingWithAnime>> call, Response<List<RatingWithAnime>> response) {
+                if (response.isSuccessful()) {
+                    List<RatingWithAnime> ratings = response.body();
+                    ratedAnimesLiveData.postValue(ratings);
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RatingWithAnime>> call, Throwable t) {
+                // Handle network error
+            }
+        });
+
+        return ratedAnimesLiveData;
     }
 }

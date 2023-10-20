@@ -35,7 +35,10 @@ public interface APIs {
     Call<Rating> rateAnime(@Body Rating rating);
 
     @GET("ratings/{userId}/{animeId}")
-    Call<Rating> getRating(@Path("userId")String userId, @Path("animeId") String animeId);
+    Call<Rating> getRatingByUserIdAndAnimeId(@Path("userId")String userId, @Path("animeId") String animeId);
+
+    @GET("ratings/user/{userId}/animes")
+    Call<List<RatingWithAnime>> getAnimesRatedByUser(@Path("userId") String userId);
 
     //@GET("animes/search/limit=50")
     //Call<List<Anime>> filterAnimes(@Query("page") String text);

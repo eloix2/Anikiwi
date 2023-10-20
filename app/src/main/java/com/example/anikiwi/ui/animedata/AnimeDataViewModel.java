@@ -9,9 +9,6 @@ import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.repositories.AnimeRepository;
 import com.example.anikiwi.repositories.RatingRepository;
-import com.example.anikiwi.repositories.UserRepository;
-
-import java.util.Map;
 
 public class AnimeDataViewModel extends ViewModel {
     private MutableLiveData<Anime> animeDataLiveData;
@@ -32,7 +29,7 @@ public class AnimeDataViewModel extends ViewModel {
 
         ratingRepository = RatingRepository.getInstance();
         ratingLiveData = new MutableLiveData<>();
-        ratingLiveData = ratingRepository.getRating(getActiveUserId(), animeId);
+        ratingLiveData = ratingRepository.getRatingByUserIdAndAnimeId(getActiveUserId(), animeId);
     }
 
     public LiveData<Anime> getAnimeData() {
@@ -50,6 +47,6 @@ public class AnimeDataViewModel extends ViewModel {
     public void rateAnime(Rating rating) {
         ratingRepository.rateAnime(rating);
         // updates the rating live data
-        ratingRepository.getRating(rating.getUserId(), rating.getAnimeId());
+        ratingRepository.getRatingByUserIdAndAnimeId(rating.getUserId(), rating.getAnimeId());
     }
 }
