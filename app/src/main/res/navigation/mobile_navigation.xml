@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_watching">
+    app:startDestination="@+id/navigation_ratings">
 
     <fragment
-        android:id="@+id/navigation_watching"
-        android:name="com.example.anikiwi.ui.watching.WatchingFragment"
-        android:label="@string/title_watching"
-        tools:layout="@layout/fragment_watching" />
+        android:id="@+id/navigation_ratings"
+        android:name="com.example.anikiwi.ui.ratings.RatingsFragment"
+        android:label="@string/title_ratings"
+        tools:layout="@layout/fragment_ratings" />
 
     <fragment
         android:id="@+id/navigation_anime"

@@ -10,12 +10,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="?colorSurfaceVariant">
 
         <ImageView
             android:id="@+id/img_anime"
             android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_height="120dp"
             android:src="@drawable/ic_launcher_background"
             android:scaleType="centerCrop" />
 
@@ -26,7 +27,8 @@
             android:layout_toEndOf="@id/img_anime"
             android:layout_marginStart="16dp"
             android:text="Title"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textColor="?colorOnSurfaceVariant"/>
 
     </RelativeLayout>
 

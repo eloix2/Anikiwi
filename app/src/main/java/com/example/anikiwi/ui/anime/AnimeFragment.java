@@ -56,6 +56,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
     TextView noResult;
+    LinearLayout linearLayoutError;
     private AnimeViewModel animeViewModel;
 
 
@@ -68,6 +69,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
         binding = FragmentAnimeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        linearLayoutError = binding.llErrorAnime;
         floatingActionButtonRetry = binding.fabRetry;
         noResult = binding.tvErrorAnime;
         progressBar = binding.pbAnime;
@@ -79,8 +81,9 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         // Retry button
         floatingActionButtonRetry.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
-            floatingActionButtonRetry.setVisibility(View.GONE);
-            noResult.setVisibility(View.GONE);
+            linearLayoutError.setVisibility(View.GONE);
+            //floatingActionButtonRetry.setVisibility(View.GONE);
+            //noResult.setVisibility(View.GONE);
             animeViewModel.refreshAnimes();
         });
 
@@ -126,13 +129,15 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                 animes = anime;
                 adapter.setAnimes(animes);
                 progressBar.setVisibility(View.GONE);
-                floatingActionButtonRetry.setVisibility(View.GONE);
-                noResult.setVisibility(View.GONE);
+                linearLayoutError.setVisibility(View.GONE);
+                //floatingActionButtonRetry.setVisibility(View.GONE);
+                //noResult.setVisibility(View.GONE);
             }
             else {
                 progressBar.setVisibility(View.GONE);
-                floatingActionButtonRetry.setVisibility(View.VISIBLE);
-                noResult.setVisibility(View.VISIBLE);
+                linearLayoutError.setVisibility(View.VISIBLE);
+                //floatingActionButtonRetry.setVisibility(View.VISIBLE);
+                //noResult.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -153,7 +158,6 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     @Override
     public void onAnimeClick(Anime anime) {
         Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
-        //TODO: hacer que se abra el anime en cuestion
         //intent a la activity de anime pasando el anime
 
         Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);
@@ -161,8 +165,6 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         intent.putExtra("anime_title", anime.getTitle()); // Pass anime title to the details activity
         // Add other data you want to pass to the AnimeDetailsActivity
         this.requireContext().startActivity(intent);
-
-
     }
 
     public void initScrollListener(AnimeViewModel animeViewModel) {

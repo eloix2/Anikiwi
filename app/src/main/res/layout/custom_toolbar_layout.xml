@@ -4,8 +4,9 @@
     android:id="@+id/custom_Toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/black"
-    app:contentInsetStart="0dp"
+    android:background="?colorPrimary"
+    android:theme="@style/Theme.Anikiwi"
+    app:contentInsetStart="10dp"
     app:contentInsetStartWithNavigation="0dp">
 
     <!-- Add any other views you want in the toolbar here -->
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="15dp"
-        android:textColor="@color/white"
+        android:textColor="?colorOnPrimary"
         android:textSize="20sp"
         android:textStyle="bold" />
 

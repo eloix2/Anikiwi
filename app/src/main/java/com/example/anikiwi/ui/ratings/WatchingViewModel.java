@@ -1,4 +1,4 @@
-package com.example.anikiwi.ui.watching;
+package com.example.anikiwi.ui.ratings;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel;
 import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.networking.User;
-import com.example.anikiwi.repositories.AnimeRepository;
 import com.example.anikiwi.repositories.RatingRepository;
 
 import java.util.List;

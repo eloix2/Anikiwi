@@ -5,6 +5,7 @@
         android:id="@+id/action_search"
         android:title="@string/search"
         android:icon="@drawable/baseline_search_24"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        />
     <!-- Add more menu items if needed -->
 </menu>

@@ -2,6 +2,8 @@ package com.example.anikiwi.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +12,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.anikiwi.R;
 import com.example.anikiwi.networking.Anime;
 
@@ -66,9 +73,23 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.tv_anime_title.setText(this.animes.get(position).getTitle());
         holder.itemView.setOnClickListener(v -> clickListener.onAnimeClick(animes.get(position)));
         Glide.with(context)
+                .asBitmap()
                 .load(this.animes.get(position).getImage_url())
-                .apply(RequestOptions.centerCropTransform())
-                .into(holder.img_anime);
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), resource);
+                        roundedBitmapDrawable.setCornerRadius(18.0f); // You can adjust the corner radius as needed
+                        roundedBitmapDrawable.setAntiAlias(true); // This improves the quality of the rounding
+
+                        holder.img_anime.setImageDrawable(roundedBitmapDrawable);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
     }
 
     //todo: borrar esto
