@@ -39,5 +39,20 @@
         <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Style of the overflow button, by default is the three dots  -->
+        <item name="actionOverflowButtonStyle"> @style/OverFlowButton</item>
+        <item name="android:itemTextAppearance">@style/CustomMenuItemStyle</item>
+        <item name="android:itemBackground">?colorSurface</item>
+    </style>
+
+    <!-- (Not used) Style of the overflow button, by default is the three dots. To change icon (android:src) -->
+    <style name="OverFlowButton" parent="Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:tint">?colorOnPrimary</item>
+    </style>
+
+    <!-- Style of the popup menu. -->
+    <style name="CustomMenuItemStyle" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:textSize">18sp</item>
     </style>
 </resources>

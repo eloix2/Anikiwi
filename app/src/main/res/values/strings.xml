@@ -21,6 +21,11 @@
     <string name="filters">Filters</string>
     <string name="rate_anime">Rate Anime</string>
     <string name="enter_date">Enter date</string>
+    <string name="category">Category</string>
+    <string name="Watching">Watching</string>
+    <string name="Completed">Completed</string>
+    <string name="Planning">Planning</string>
+    <string name="Dropped">Dropped</string>
     <string-array name="seasons_array">
         <item />
         <item>SPRING</item>

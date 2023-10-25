@@ -14,10 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,13 +25,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.anikiwi.MainActivity;
 import com.example.anikiwi.R;
 import com.example.anikiwi.adapter.AnimeAdapter;
 import com.example.anikiwi.databinding.FragmentAnimeBinding;
@@ -45,7 +40,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickListener {
 
@@ -55,7 +49,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
     boolean isLoading = false;
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
-    TextView noResult;
+    //TextView noResult;
     LinearLayout linearLayoutError;
     private AnimeViewModel animeViewModel;
 
@@ -71,7 +65,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         View root = binding.getRoot();
         linearLayoutError = binding.llErrorAnime;
         floatingActionButtonRetry = binding.fabRetry;
-        noResult = binding.tvErrorAnime;
+        //noResult = binding.tvErrorAnime;
         progressBar = binding.pbAnime;
 
         // Custom Toolbar
@@ -106,7 +100,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.toolbar_menu, menu);
+                menuInflater.inflate(R.menu.anime_list_toolbar_menu, menu);
             }
 
             @Override

@@ -9,8 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +34,7 @@ import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RatingsFragment extends Fragment implements RatingAdapter.ItemClickListener {
 
@@ -43,7 +44,7 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
     private List<RatingWithAnime> ratings;
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
-    TextView noResult;
+    //TextView noResult;
     LinearLayout linearLayoutError;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,12 +56,12 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         View root = binding.getRoot();
         linearLayoutError = binding.llErrorRating;
         floatingActionButtonRetry = binding.fabRetry;
-        noResult = binding.tvErrorRating;
+        //noResult = binding.tvErrorRating;
         progressBar = binding.pbRating;
 
         // Custom Toolbar
         setFragmentToolbar(root);
-        //setToolbarMenu();
+        setToolbarMenu();
 
         // Retry button
         floatingActionButtonRetry.setOnClickListener(v -> {
@@ -127,26 +128,62 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
     }
     // Sets the menu for the toolbar
-    /*private void setToolbarMenu() {
+    private void setToolbarMenu() {
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.toolbar_menu, menu);
+                menuInflater.inflate(R.menu.ratings_list_toolbar_menu, menu);
             }
 
             @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                // Add else ifs for other menu items here
-                if (menuItem.getItemId() == R.id.action_search) {
-                    // Handle search icon press
-                    Toast.makeText(getContext(), "Search icon pressed", Toast.LENGTH_SHORT).show();
-                    showCustomDialog();
+            public boolean onMenuItemSelected(MenuItem item) {
+                if (item.getItemId() == R.id.action_filter) {
+                    // Handle action_filter click
+                    Toast.makeText(getContext(), "Filter icon pressed", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (item.getItemId() == R.id.action_popup_menu) {
+                    // Handle action_popup_menu click
+                    showPopupMenu();
                     return true;
                 }
                 return false;
             }
+
+
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-    }*/
+    }
+
+    private void showPopupMenu() {
+        PopupMenu popupMenu = new PopupMenu(requireContext(), requireView().findViewById(R.id.action_popup_menu));
+        popupMenu.getMenuInflater().inflate(R.menu.ratings_popup_menu, popupMenu.getMenu());
+
+        // Set the item click listener
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+
+                if (menuItem.getItemId() == R.id.r_popup_option1) {
+                    // Handle option 1
+                    Toast.makeText(getContext(), "Option 1 selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (menuItem.getItemId() == R.id.r_popup_option2) {
+                    // Handle option 2 click
+                    Toast.makeText(getContext(), "Option 2 selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (menuItem.getItemId() == R.id.r_popup_option3) {
+                    // Handle option 3 click
+                    Toast.makeText(getContext(), "Option 3 selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (menuItem.getItemId() == R.id.r_popup_option4) {
+                    // Handle option 4 click
+                    Toast.makeText(getContext(), "Option 4 selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else {
+                    return false;
+                }
+
+        });
+
+        popupMenu.show();
+    }
 
     @Override
     public void onDestroyView() {

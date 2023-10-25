@@ -12,7 +12,7 @@
         android:text="@string/filters"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/purple_200"
+        android:textColor="?colorPrimary"
         android:padding="10dp"
         android:gravity="center_horizontal" />
 

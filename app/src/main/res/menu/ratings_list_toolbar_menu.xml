@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_popup_menu"
+        android:title="@string/category"
+        android:icon="@drawable/baseline_swap_horiz_28"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_filter"
+        android:title="@string/filters"
+        android:icon="@drawable/baseline_filter_list_28"
+        app:showAsAction="always" />
+
+</menu>
