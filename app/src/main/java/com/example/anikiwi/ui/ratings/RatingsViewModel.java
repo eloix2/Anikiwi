@@ -11,12 +11,12 @@ import com.example.anikiwi.repositories.RatingRepository;
 
 import java.util.List;
 
-public class WatchingViewModel extends ViewModel {
+public class RatingsViewModel extends ViewModel {
     private MutableLiveData<List<RatingWithAnime>> ratedAnimesLiveData;
     private final MutableLiveData<String> mText;
     private RatingRepository ratingRepository;
 
-    public WatchingViewModel() {
+    public RatingsViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is watching fragment");
     }

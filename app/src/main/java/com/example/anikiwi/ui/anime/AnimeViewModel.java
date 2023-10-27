@@ -23,6 +23,8 @@ public class AnimeViewModel extends ViewModel {
     //private MutableLiveData<Boolean> isUpdating = new MutableLiveData<>();
     private Map<String, Object> savedQueryParams = new HashMap<>();
 
+    private MutableLiveData<Boolean> refreshCompleteLiveData = new MutableLiveData<>();
+
     /**
      * Initializes the AnimeViewModel.
      * Initializes the AnimeViewModel by getting the AnimeRepository instance and the animes list.
@@ -82,6 +84,7 @@ public class AnimeViewModel extends ViewModel {
         // Clears anime list and loads new data
         animeRepository.clearAnimeList();
         animeRepository.loadMore(queryParams);
+        refreshCompleteLiveData.setValue(true);
     }
 
     /**
@@ -136,5 +139,9 @@ public class AnimeViewModel extends ViewModel {
         } else {
             return null; // Handle the case where value is null or of an unexpected type
         }
+    }
+
+    public LiveData<Boolean> getRefreshCompleteObserver() {
+        return refreshCompleteLiveData;
     }
 }

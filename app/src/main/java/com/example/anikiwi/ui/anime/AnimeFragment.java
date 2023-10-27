@@ -25,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -84,6 +85,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         initObserver(animeViewModel);
         initRecyclerView();
         initScrollListener(animeViewModel);
+        configSwipe();
         return root;
     }
 
@@ -142,6 +144,22 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         adapter = new AnimeAdapter(this.getContext(), animes, this);
         recyclerView.setAdapter(adapter);
     }
+
+    private void configSwipe() {
+        binding.animeSwipeRefreshLayout.setColorSchemeResources(R.color.md_theme_dark_primary);
+        binding.animeSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.md_theme_dark_onPrimary);
+
+        animeViewModel.getRefreshCompleteObserver().observe(getViewLifecycleOwner(), refreshComplete -> {
+            if (refreshComplete) {
+                binding.animeSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        binding.animeSwipeRefreshLayout.setOnRefreshListener(() -> {
+            animeViewModel.refreshAnimes();
+        });
+    }
+
 
     @Override
     public void onDestroyView() {

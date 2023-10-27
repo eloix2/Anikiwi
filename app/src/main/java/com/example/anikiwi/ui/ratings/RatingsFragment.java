@@ -34,13 +34,12 @@ import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
-import java.util.Objects;
 
 public class RatingsFragment extends Fragment implements RatingAdapter.ItemClickListener {
 
     private FragmentRatingsBinding binding;
     private RatingAdapter ratingAdapter;
-    private WatchingViewModel watchingViewModel;
+    private RatingsViewModel ratingsViewModel;
     private List<RatingWithAnime> ratings;
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
@@ -49,9 +48,9 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        watchingViewModel =
-                new ViewModelProvider(this).get(WatchingViewModel.class);
-        watchingViewModel.init();
+        ratingsViewModel =
+                new ViewModelProvider(this).get(RatingsViewModel.class);
+        ratingsViewModel.init();
         binding = FragmentRatingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         linearLayoutError = binding.llErrorRating;
@@ -70,20 +69,28 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
             //floatingActionButtonRetry.setVisibility(View.GONE);
             //noResult.setVisibility(View.GONE);
             //todo: change or delete
-            initObserver(watchingViewModel);
+            initObserver(ratingsViewModel);
 
-            watchingViewModel.init();
+            ratingsViewModel.init();
         });
 
         //final TextView textView = binding.textWatching;
-        //watchingViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        initObserver(watchingViewModel);
+        //ratingsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        initObserver(ratingsViewModel);
         initRecyclerView();
-        initScrollListener(watchingViewModel);
+        initScrollListener(ratingsViewModel);
+        configSwipe();
         return root;
     }
 
-    private void initScrollListener(WatchingViewModel watchingViewModel) {
+    private void configSwipe() {
+        binding.ratingsSwipeRefreshLayout.setOnRefreshListener(() -> {
+            ratingsViewModel.getRatedAnimesLiveData(SessionManager.getInstance().getActiveUser().getId());
+            binding.ratingsSwipeRefreshLayout.setRefreshing(false);
+        });
+    }
+
+    private void initScrollListener(RatingsViewModel ratingsViewModel) {
 
     }
 
@@ -95,10 +102,10 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         recyclerView.setAdapter(ratingAdapter);
     }
 
-    private void initObserver(WatchingViewModel watchingViewModel) {
+    private void initObserver(RatingsViewModel ratingsViewModel) {
         User activeUser = SessionManager.getInstance().getActiveUser();
         if (activeUser != null) {
-            watchingViewModel.getRatedAnimesLiveData(activeUser.getId()).observe(getViewLifecycleOwner(), ratingWithAnimes -> {
+            ratingsViewModel.getRatedAnimesLiveData(activeUser.getId()).observe(getViewLifecycleOwner(), ratingWithAnimes -> {
                 if (ratingWithAnimes != null) {
                     ratings = ratingWithAnimes;
                     ratingAdapter.setRatings(ratingWithAnimes); // Update the adapter

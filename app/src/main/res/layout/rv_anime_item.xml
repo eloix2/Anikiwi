@@ -18,7 +18,8 @@
             android:layout_width="80dp"
             android:layout_height="120dp"
             android:src="@drawable/ic_launcher_background"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/anime_image" />
 
         <TextView
             android:id="@+id/tv_anime_title"
@@ -26,13 +27,25 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/img_anime"
             android:layout_marginStart="16dp"
-            android:text="Title"
+            android:text="@string/title"
             android:textSize="18sp"
             android:textColor="?colorOnSurfaceVariant"/>
+
+        <Button
+            android:id="@+id/btn_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:text="Rate"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:minWidth="100dp"
+        />
 
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
-
-
-
