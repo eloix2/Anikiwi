@@ -35,6 +35,7 @@ import com.example.anikiwi.adapter.AnimeAdapter;
 import com.example.anikiwi.databinding.FragmentAnimeBinding;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.ui.animedata.AnimeDataActivity;
+import com.example.anikiwi.utilities.OnDataLoadedListener;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -60,14 +61,33 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
         animeViewModel =
                 new ViewModelProvider(this).get(AnimeViewModel.class);
-        animeViewModel.init();
 
         binding = FragmentAnimeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
         linearLayoutError = binding.llErrorAnime;
+        // Sets the visibility of the error layout to GONE every time the fragment is created
+        // This is done to avoid the error layout staying visible after the user navigates back to the fragment
+        linearLayoutError.setVisibility(View.GONE);
         floatingActionButtonRetry = binding.fabRetry;
-        //noResult = binding.tvErrorAnime;
         progressBar = binding.pbAnime;
+
+        animeViewModel.init(new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // Update the UI with the new data
+                adapter.notifyDataSetChanged();
+                linearLayoutError.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                // Show error message with floating action button to retry
+                linearLayoutError.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
         // Custom Toolbar
         setFragmentToolbar(root);
@@ -77,9 +97,21 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         floatingActionButtonRetry.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
             linearLayoutError.setVisibility(View.GONE);
-            //floatingActionButtonRetry.setVisibility(View.GONE);
-            //noResult.setVisibility(View.GONE);
-            animeViewModel.reloadAnimes();
+            animeViewModel.reloadAnimes(new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    // Update the UI with the new data
+                    adapter.notifyDataSetChanged();
+                    linearLayoutError.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    linearLayoutError.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
         });
 
         initObserver(animeViewModel);
@@ -124,14 +156,14 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
             if(anime != null) {
                 animes = anime;
                 adapter.setAnimes(animes);
-                progressBar.setVisibility(View.GONE);
-                linearLayoutError.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                //linearLayoutError.setVisibility(View.GONE);
                 //floatingActionButtonRetry.setVisibility(View.GONE);
                 //noResult.setVisibility(View.GONE);
             }
             else {
-                progressBar.setVisibility(View.GONE);
-                linearLayoutError.setVisibility(View.VISIBLE);
+                //progressBar.setVisibility(View.GONE);
+                //linearLayoutError.setVisibility(View.VISIBLE);
                 //floatingActionButtonRetry.setVisibility(View.VISIBLE);
                 //noResult.setVisibility(View.VISIBLE);
             }
@@ -149,14 +181,20 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         binding.animeSwipeRefreshLayout.setColorSchemeResources(R.color.md_theme_dark_primary);
         binding.animeSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.md_theme_dark_onPrimary);
 
-        animeViewModel.getRefreshCompleteObserver().observe(getViewLifecycleOwner(), refreshComplete -> {
-            if (refreshComplete) {
-                binding.animeSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
         binding.animeSwipeRefreshLayout.setOnRefreshListener(() -> {
-            animeViewModel.refreshAnimes();
+            animeViewModel.refreshAnimes(new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    // Update the UI with the new data
+                    adapter.notifyDataSetChanged();
+                    binding.animeSwipeRefreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    binding.animeSwipeRefreshLayout.setRefreshing(false);
+                }
+            });
         });
     }
 
@@ -181,45 +219,46 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
     public void initScrollListener(AnimeViewModel animeViewModel) {
         RecyclerView recyclerView = binding.rvAnime;
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState){
-                super.onScrollStateChanged(recyclerView, newState);
-
-            }
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (!animeViewModel.isLoading()) {
                     if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == animes.size() - 1) {
-                        // bottom of list!
                         animeViewModel.setLoading(true);
-                        loadMore(animeViewModel);
+                        loadMoreData(animeViewModel);
                     }
                 }
             }
+        });
+    }
 
-            //Todo: He cambiado la manera en la que se invoca a la progress bar para no meterla en el reciclerview, esto lo ha arreglado. En caso que lo deje así lo ideal quizas es borrar lo que tenga que ver con la antigua progress bar
+    private void loadMoreData(AnimeViewModel animeViewModel) {
+        // Show a loading indicator here
+        progressBar.setVisibility(View.VISIBLE);
 
-            private void loadMore(AnimeViewModel animeViewModel) {
+        animeViewModel.loadMoreData(new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // Update the UI with the new data
+                adapter.notifyDataSetChanged();
 
-                progressBar.setVisibility(View.VISIBLE);
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //load more data from the viewmodel
-                        animeViewModel.loadMore();
-                        adapter.notifyDataSetChanged();
+                // Hide the loading indicator
+                progressBar.setVisibility(View.GONE);
+            }
 
-                        animeViewModel.setLoading(false);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, 1000);
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                // Handle data load failure, show an error message to the user if needed
+                // Hide the loading indicator
+                progressBar.setVisibility(View.GONE);
             }
         });
-
     }
+
 
     public void showCustomDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.requireContext());
@@ -288,8 +327,24 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                 if(!selectedStatus.isEmpty())
                     queryParams.put("status", selectedStatus);
 
-                animeViewModel.filterAnimes(queryParams);
-                adapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.VISIBLE);
+
+                animeViewModel.filterAnimes(queryParams, new OnDataLoadedListener() {
+                    @Override
+                    public void onDataLoaded() {
+                        // Update the UI with the new data
+                        adapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
+                        linearLayoutError.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onDataLoadFailed(String errorMessage) {
+                        // Show error message with floating action button to retry
+                        linearLayoutError.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
         });
 

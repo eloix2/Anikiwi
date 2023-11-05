@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RatingsViewModel extends ViewModel {
-    private static final int DEFAULT_PAGE_LIMIT = 50;
+    private static final int DEFAULT_PAGE_LIMIT = 5;
     private static final int DEFAULT_START_PAGE = 1;
     private int pageNumber = DEFAULT_START_PAGE;
     private Map<String, Object> savedQueryParams = new HashMap<>();
@@ -23,6 +23,7 @@ public class RatingsViewModel extends ViewModel {
     private MutableLiveData<Boolean> refreshCompleteLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> mText;
     private RatingRepository ratingRepository;
+    private boolean isLoading = false;
 
     public RatingsViewModel() {
         mText = new MutableLiveData<>();
@@ -41,6 +42,22 @@ public class RatingsViewModel extends ViewModel {
             reloadRatings();
             ratedAnimesLiveData = ratingRepository.getRatingWithAnimeList();
         }
+    }
+
+    /**
+     * Gets the loading state.
+     * @return the loading state
+     */
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    /**
+     * Sets the loading state.
+     * @param loading the loading state
+     */
+    public void setLoading(boolean loading) {
+        isLoading = loading;
     }
 
     public LiveData<String> getText() {
@@ -75,6 +92,19 @@ public class RatingsViewModel extends ViewModel {
         ratingRepository.clearRatingWithAnimeList();
         ratingRepository.loadMore(queryParams);
         refreshCompleteLiveData.setValue(true);
+    }
+
+    /**
+     * Loads more ratings into the list.
+     * Loads more ratings into the list by increasing the page number and calling the API again.
+     */
+    public void loadMore() {
+        pageNumber++;
+        Map<String,Object> queryParams = new HashMap<>();
+        queryParams.putAll(savedQueryParams);
+        queryParams.putAll(getDefaultQueryParams());
+        // Load more data and append to the list
+        ratingRepository.loadMore(queryParams);
     }
 
     /**

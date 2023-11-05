@@ -10,6 +10,7 @@ import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.User;
+import com.example.anikiwi.utilities.OnDataLoadedListener;
 
 import java.util.AbstractCollection;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class AnimeRepository {
         });
     }
 
-    public void loadMore(Map<String, Object> queryParams) {
+    public void loadMore(Map<String, Object> queryParams, OnDataLoadedListener onDataLoadedListener) {
         APIs api = RetrofitClient.getInstance().getApis();
         Call<List<Anime>> call = api.getAnimesQuery(queryParams);
         call.enqueue(new Callback<List<Anime>>() {
@@ -79,7 +80,7 @@ public class AnimeRepository {
             public void onResponse(Call<List<Anime>> call, Response<List<Anime>> response) {
                 if(response.body() == null){
                     Log.d("AnimeRepository", "LoadMore onResponse: response.body() == null");
-                    animes.postValue(null);
+                    onDataLoadedListener.onDataLoadFailed("Response body is null");
                     return;
                 }
 
@@ -92,15 +93,18 @@ public class AnimeRepository {
                     oldAnimes.addAll(response.body());
                 }
                 animes.postValue(oldAnimes);
+
+                onDataLoadedListener.onDataLoaded();
             }
 
             @Override
             public void onFailure(Call<List<Anime>> call, Throwable t) {
                 Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
-                animes.postValue(null);
+                onDataLoadedListener.onDataLoadFailed(t.getMessage());
             }
         });
     }
+
 
     public MutableLiveData<Anime> getAnime(String animeId) {
         getAnimeApiCall(animeId);

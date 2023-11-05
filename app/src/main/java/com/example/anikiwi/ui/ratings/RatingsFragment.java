@@ -2,6 +2,8 @@ package com.example.anikiwi.ui.ratings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +31,7 @@ import com.example.anikiwi.databinding.FragmentRatingsBinding;
 import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.networking.User;
+import com.example.anikiwi.ui.anime.AnimeViewModel;
 import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -81,15 +84,64 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
     }
 
     private void configSwipe() {
+        binding.ratingsSwipeRefreshLayout.setColorSchemeResources(R.color.md_theme_dark_primary);
+        binding.ratingsSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.md_theme_dark_onPrimary);
+
+        ratingsViewModel.getRefreshCompleteObserver().observe(getViewLifecycleOwner(), refreshComplete -> {
+            if (refreshComplete) {
+                binding.ratingsSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         binding.ratingsSwipeRefreshLayout.setOnRefreshListener(() -> {
-            ratingsViewModel.getRatedAnimesLiveData(SessionManager.getInstance().getActiveUser().getId());
-            binding.ratingsSwipeRefreshLayout.setRefreshing(false);
+            ratingsViewModel.refreshRatings();
         });
     }
 
-    private void initScrollListener(RatingsViewModel ratingsViewModel) {
+    public void initScrollListener(RatingsViewModel ratingsViewModel) {
+        RecyclerView recyclerView = binding.rvRating;
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState){
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                if (!ratingsViewModel.isLoading()) {
+                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == ratings.size() - 1) {
+                        // bottom of list!
+                        ratingsViewModel.setLoading(true);
+                        loadMore(ratingsViewModel);
+                    }
+                }
+            }
+
+            //Todo: He cambiado la manera en la que se invoca a la progress bar para no meterla en el reciclerview, esto lo ha arreglado. En caso que lo deje así lo ideal quizas es borrar lo que tenga que ver con la antigua progress bar
+
+            private void loadMore(RatingsViewModel ratingsViewModel) {
+
+                progressBar.setVisibility(View.VISIBLE);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //load more data from the viewmodel
+                        ratingsViewModel.loadMore();
+                        //adapter.notifyDataSetChanged();
+
+                        ratingsViewModel.setLoading(false);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }, 1000);
+            }
+        });
 
     }
+
+//    private void initScrollListener(RatingsViewModel ratingsViewModel) {
+//
+//    }
 
     private void initRecyclerView() {
         RecyclerView recyclerView = binding.rvRating;
