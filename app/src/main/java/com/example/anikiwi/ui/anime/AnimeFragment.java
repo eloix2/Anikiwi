@@ -79,7 +79,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
             linearLayoutError.setVisibility(View.GONE);
             //floatingActionButtonRetry.setVisibility(View.GONE);
             //noResult.setVisibility(View.GONE);
-            animeViewModel.refreshAnimes();
+            animeViewModel.reloadAnimes();
         });
 
         initObserver(animeViewModel);

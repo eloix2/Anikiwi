@@ -2,10 +2,7 @@ package com.example.anikiwi.repositories;
 
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.example.anikiwi.networking.APIs;
-import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.SessionManager;
@@ -14,9 +11,6 @@ import com.example.anikiwi.networking.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,7 +25,6 @@ public class UserRepository {
         if (instance == null) {
             instance = new UserRepository();
         }
-        //Log.d("AnimeRepository", "getInstance: " + instance.toString());
         return instance;
     }
 
@@ -40,8 +33,13 @@ public class UserRepository {
         sessionManager = SessionManager.getInstance();
     }
 
-    public static void createUserInDatabase(String displayName, String email) {
-        //TODO: DONE - Recuerda tener en cuenta que la api esta siempre caida al inicio
+    /**
+     * Creates a user in the database.
+     * @param displayName the user's display name
+     * @param email the user's email
+     * @param onUserCreatedListener the OnUserCreatedListener
+     */
+    public static void createUserInDatabase(String displayName, String email, OnUserCreatedListener onUserCreatedListener) {
         APIs api = RetrofitClient.getInstance().getApis();
         User user = new User(displayName, email);
         Call<User> call = api.createUserInDatabase(user);
@@ -49,15 +47,15 @@ public class UserRepository {
             @Override
             protected void handleSuccess(User response) {
                 Log.d("UserRepository", "User created: " + response);
-                // Handle success
                 // Assign the response to the active user
                 sessionManager.setActiveUser(response);
+                // Call the onUserCreatedListener
+                onUserCreatedListener.onUserCreated(response);
             }
 
             @Override
             protected void handleConflictError(JSONObject errorBody) {
                 Log.d("UserRepository", "User creation failed: Conflict - User already exists");
-                // Handle conflict error
                 // Assign the errorBody to the active user
                 try {
                     // Attempt to retrieve values from the errorBody
@@ -68,15 +66,13 @@ public class UserRepository {
                     // Create a User object with the retrieved values
                     User existingUser = new User(id, username, email);
 
-                    // Set the active user
-                    SessionManager.getInstance().setActiveUser(existingUser);
+                    // Notify the onUserCreatedListener that the user already exists
+                    onUserCreatedListener.onUserCreated(existingUser);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     // Handle the JSONException, log an error, or provide user feedback as needed
                 }
-                //sessionManager.setActiveUser(user);
-
             }
 
             @Override
@@ -108,5 +104,13 @@ public class UserRepository {
                 Log.d("UserRepository", "onFailure: " + t.getMessage());
             }
         });
+    }
+
+    /**
+     * Interface for the OnUserCreatedListener.
+     * Lets the caller know when the user is created in the database
+     */
+    public interface OnUserCreatedListener {
+        void onUserCreated(User user);
     }
 }

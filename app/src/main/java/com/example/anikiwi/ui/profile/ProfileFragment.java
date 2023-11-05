@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.anikiwi.MainActivity;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.FragmentProfileBinding;
+import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.ui.login.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -53,6 +54,8 @@ public class ProfileFragment extends Fragment {
             FirebaseAuth.getInstance().signOut();
             mGoogleSignInClient.signOut()
                     .addOnCompleteListener(requireActivity(), task -> {
+                            // Clear the active user
+                            SessionManager.getInstance().clearActiveUser();
                             Toast.makeText(getActivity(), "Logged out", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);

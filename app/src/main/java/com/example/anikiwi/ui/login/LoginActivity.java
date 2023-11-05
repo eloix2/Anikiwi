@@ -2,7 +2,6 @@ package com.example.anikiwi.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.anikiwi.MainActivity;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.ActivityLoginBinding;
-import com.example.anikiwi.repositories.AnimeRepository;
+import com.example.anikiwi.networking.SessionManager;
+import com.example.anikiwi.networking.User;
 import com.example.anikiwi.repositories.UserRepository;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -76,15 +76,31 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in, add user to database if not already added
-                    UserRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
-                    // Start main activity
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish(); // Close the login activity
-                    //Toast.makeText(LoginActivity.this, "User is signed in", Toast.LENGTH_SHORT).show();
+                    // Check if the user is already created in the database
+                    User activeUser = SessionManager.getInstance().getActiveUser();
+
+                    if (activeUser == null) {
+                        // User is signed in, but not necessarily created in the database yet
+                        // Make an API call to create the user in the database
+                        UserRepository.createUserInDatabase(user.getDisplayName(), user.getEmail(), new UserRepository.OnUserCreatedListener() {
+                            @Override
+                            public void onUserCreated(User user) {
+                                // User is created in the database, set as active user
+                                SessionManager.getInstance().setActiveUser(user);
+                                // Proceed to main activity
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish(); // Close the login activity
+                            }
+                        });
+                    } else {
+                        // User is already created in the database, proceed to main activity
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish(); // Close the login activity
+                    }
                 }
             }
         };
+
     }
 
     @Override
@@ -134,10 +150,25 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Make an API call to create the user in the database
                             if (user != null) {
-                                UserRepository.createUserInDatabase(user.getDisplayName(), user.getEmail());
+                                User activeUser = SessionManager.getInstance().getActiveUser();
+                                if (activeUser == null) {
+                                    UserRepository.createUserInDatabase(user.getDisplayName(), user.getEmail(), new UserRepository.OnUserCreatedListener() {
+                                        @Override
+                                        public void onUserCreated(User user) {
+                                            // User is created in the database, set as active user
+                                            SessionManager.getInstance().setActiveUser(user);
+                                            // Proceed to main activity
+                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                            finish(); // Close the login activity
+                                        }
+                                    });
+                                }
+                                else {
+                                    // User is already created in the database, proceed to main activity
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    finish(); // Close the login activity
+                                }
                             }
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish(); // Close the login activity
                         } else {
                             // Sign-in failed, handle the error
                             // Show an error message

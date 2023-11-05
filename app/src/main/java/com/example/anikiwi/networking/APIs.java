@@ -12,7 +12,8 @@ import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 public interface APIs {
-    String BASE_URL = "https://anikiwi-api.onrender.com/api/";
+    String BASE_URL = "https://anikiwi-api-13fbded2aee1.herokuapp.com/api/";
+    //String BASE_URL = "https://anikiwi-api.onrender.com/api/";
 
     @GET("animes/search?year=2023&page=1&limit=50")
     Call<List<Anime>> getAnimes();
@@ -39,6 +40,9 @@ public interface APIs {
 
     @GET("ratings/user/{userId}/animes")
     Call<List<RatingWithAnime>> getAnimesRatedByUser(@Path("userId") String userId);
+
+    @GET("ratings/search")
+    Call<List<RatingWithAnime>> getRatingsQuery(@QueryMap Map<String, Object> queryParams);
 
     //@GET("animes/search/limit=50")
     //Call<List<Anime>> filterAnimes(@Query("page") String text);

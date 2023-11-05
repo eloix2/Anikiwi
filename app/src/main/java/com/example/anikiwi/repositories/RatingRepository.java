@@ -11,6 +11,7 @@ import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.RetrofitClient;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +42,10 @@ public class RatingRepository {
 
     private RatingRepository() {
         //ratings = new MutableLiveData<>();
+    }
+
+    public MutableLiveData<List<RatingWithAnime>> getRatingWithAnimeList() {
+        return ratedAnimesLiveData;
     }
 
 
@@ -105,5 +110,40 @@ public class RatingRepository {
         });
 
         return ratedAnimesLiveData;
+    }
+
+    public void loadMore(Map<String, Object> queryParams) {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<List<RatingWithAnime>> call = api.getRatingsQuery(queryParams);
+        call.enqueue(new Callback<List<RatingWithAnime>>() {
+            @Override
+            public void onResponse(Call<List<RatingWithAnime>> call, Response<List<RatingWithAnime>> response) {
+                if(response.body() == null){
+                    Log.d("RatingRepository", "LoadMore onResponse: response.body() == null");
+                    ratedAnimesLiveData.postValue(null);
+                    return;
+                }
+
+                List<RatingWithAnime> oldRatings = ratedAnimesLiveData.getValue();
+                if(oldRatings == null){
+                    Log.d("AnimeRepository", "LoadMore onResponse: oldAnimes == null so we create a new list");
+                    oldRatings = response.body();
+                } else {
+                    Log.d("AnimeRepository", "LoadMore onResponse: oldAnimes != null so we add the new data to the list");
+                    oldRatings.addAll(response.body());
+                }
+                ratedAnimesLiveData.postValue(oldRatings);
+            }
+
+            @Override
+            public void onFailure(Call<List<RatingWithAnime>> call, Throwable t) {
+                Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
+                ratedAnimesLiveData.postValue(null);
+            }
+        });
+    }
+
+    public void clearRatingWithAnimeList() {
+        ratedAnimesLiveData.postValue(null);
     }
 }

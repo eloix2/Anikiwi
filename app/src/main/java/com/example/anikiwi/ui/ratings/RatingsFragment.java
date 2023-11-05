@@ -68,10 +68,7 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
             linearLayoutError.setVisibility(View.GONE);
             //floatingActionButtonRetry.setVisibility(View.GONE);
             //noResult.setVisibility(View.GONE);
-            //todo: change or delete
-            initObserver(ratingsViewModel);
-
-            ratingsViewModel.init();
+            ratingsViewModel.reloadRatings();
         });
 
         //final TextView textView = binding.textWatching;

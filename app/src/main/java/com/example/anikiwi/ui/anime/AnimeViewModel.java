@@ -35,7 +35,7 @@ public class AnimeViewModel extends ViewModel {
         }
         animeRepository = AnimeRepository.getInstance();
         // Refreshes the animes list by calling and saving the savedQueryParams
-        refreshAnimes();
+        reloadAnimes();
         animes = animeRepository.getAnimes();
     }
 
@@ -72,14 +72,29 @@ public class AnimeViewModel extends ViewModel {
     }
 
     /**
-     * Refreshes the animes list.
-     * Refreshes the animes list by calling the API again with the default query params.
+     * Reloads the animes list.
+     * Reloads the animes list by calling the API again with the default query params.
      */
-    public void refreshAnimes() {
+    public void reloadAnimes() {
         pageNumber = DEFAULT_START_PAGE;
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("year", Year.now().getValue());
         savedQueryParams.putAll(queryParams);
+        queryParams.putAll(getDefaultQueryParams());
+        // Clears anime list and loads new data
+        animeRepository.clearAnimeList();
+        animeRepository.loadMore(queryParams);
+        refreshCompleteLiveData.setValue(true);
+    }
+
+    /**
+     * Refreshes the animes list.
+     * Refreshes the animes list by calling the API again with the saved query params.
+     */
+    public void refreshAnimes() {
+        pageNumber = DEFAULT_START_PAGE;
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.putAll(savedQueryParams);
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
         animeRepository.clearAnimeList();
