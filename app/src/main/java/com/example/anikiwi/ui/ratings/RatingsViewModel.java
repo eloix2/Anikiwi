@@ -22,6 +22,7 @@ public class RatingsViewModel extends ViewModel {
     private MutableLiveData<List<RatingWithAnime>> ratedAnimesLiveData;
     private MutableLiveData<Boolean> refreshCompleteLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> mText;
+    private MutableLiveData<String> watchStatus;
     private RatingRepository ratingRepository;
     private boolean isLoading = false;
 
@@ -75,6 +76,17 @@ public class RatingsViewModel extends ViewModel {
         return mText;
     }
 
+    public LiveData<String> getWatchStatus() {
+        if (watchStatus == null) {
+            watchStatus = new MutableLiveData<>();
+            watchStatus.setValue("watching");
+        }
+        return watchStatus;
+    }
+    public void setWatchStatus(String watchStatus) {
+        this.watchStatus.setValue(watchStatus);
+    }
+
     public LiveData<List<RatingWithAnime>> getRatedAnimesLiveData(String userId) {
         if (ratedAnimesLiveData == null) {
             ratedAnimesLiveData = RatingRepository.getInstance().getRatingWithAnimeList();
@@ -85,7 +97,6 @@ public class RatingsViewModel extends ViewModel {
     public void reloadRatings(OnDataLoadedListener onDataLoadedListener) {
         pageNumber = DEFAULT_START_PAGE;
         Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("watchStatus", "watching");
         savedQueryParams.putAll(queryParams);
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
@@ -159,6 +170,7 @@ public class RatingsViewModel extends ViewModel {
      */
     private Map<String, Object> getDefaultQueryParams() {
         Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("watchStatus", getWatchStatus().getValue());
         queryParams.put("page", pageNumber);
         queryParams.put("limit", DEFAULT_PAGE_LIMIT);
         queryParams.put("userId", SessionManager.getInstance().getActiveUser().getId());

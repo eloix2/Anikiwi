@@ -80,7 +80,7 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         });
         // Custom Toolbar
         setFragmentToolbar(root);
-        setToolbarMenu();
+        setToolbarMenu(root);
 
         // Retry button
         floatingActionButtonRetry.setOnClickListener(v -> {
@@ -202,12 +202,13 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
     private void setFragmentToolbar(View root) {
         // Find the Toolbar in the fragment's layout
         Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
-        toolbar.setTitle("Ratings");
+        String status = ratingsViewModel.getWatchStatus().getValue();
+        toolbar.setTitle("Ratings -> " + status.substring(0, 1).toUpperCase() + status.substring(1));
         // Set the Toolbar as the ActionBar
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
     }
     // Sets the menu for the toolbar
-    private void setToolbarMenu() {
+    private void setToolbarMenu(View root) {
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -222,7 +223,7 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
                     return true;
                 } else if (item.getItemId() == R.id.action_popup_menu) {
                     // Handle action_popup_menu click
-                    showPopupMenu();
+                    showPopupMenu(root);
                     return true;
                 }
                 return false;
@@ -232,7 +233,7 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
-    private void showPopupMenu() {
+    private void showPopupMenu(View root) {
         PopupMenu popupMenu = new PopupMenu(requireContext(), requireView().findViewById(R.id.action_popup_menu));
         popupMenu.getMenuInflater().inflate(R.menu.ratings_popup_menu, popupMenu.getMenu());
 
@@ -241,23 +242,42 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
 
                 if (menuItem.getItemId() == R.id.r_popup_option1) {
                     // Handle option 1
-                    Toast.makeText(getContext(), "Option 1 selected", Toast.LENGTH_SHORT).show();
-                    return true;
+                    ratingsViewModel.setWatchStatus("watching");
                 } else if (menuItem.getItemId() == R.id.r_popup_option2) {
                     // Handle option 2 click
-                    Toast.makeText(getContext(), "Option 2 selected", Toast.LENGTH_SHORT).show();
-                    return true;
+                    ratingsViewModel.setWatchStatus("completed");
                 } else if (menuItem.getItemId() == R.id.r_popup_option3) {
                     // Handle option 3 click
-                    Toast.makeText(getContext(), "Option 3 selected", Toast.LENGTH_SHORT).show();
-                    return true;
+                    ratingsViewModel.setWatchStatus("planning");
                 } else if (menuItem.getItemId() == R.id.r_popup_option4) {
                     // Handle option 4 click
-                    Toast.makeText(getContext(), "Option 4 selected", Toast.LENGTH_SHORT).show();
-                    return true;
+                    ratingsViewModel.setWatchStatus("dropped");
                 } else {
                     return false;
                 }
+
+                progressBar.setVisibility(View.VISIBLE);
+                ratingsViewModel.refreshRatings(new OnDataLoadedListener() {
+                    @Override
+                    public void onDataLoaded() {
+                        // Update the UI with the new data
+                        ratingAdapter.notifyDataSetChanged();
+                        // Hide the loading indicator
+                        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
+                        String status = ratingsViewModel.getWatchStatus().getValue();
+                        toolbar.setTitle("Ratings -> " + status.substring(0, 1).toUpperCase() + status.substring(1));
+                        linearLayoutError.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onDataLoadFailed(String errorMessage) {
+                        linearLayoutError.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+
+                return true;
 
         });
 
