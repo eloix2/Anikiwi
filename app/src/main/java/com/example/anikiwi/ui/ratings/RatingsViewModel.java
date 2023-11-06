@@ -8,14 +8,14 @@ import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.networking.User;
 import com.example.anikiwi.repositories.RatingRepository;
+import com.example.anikiwi.utilities.OnDataLoadedListener;
 
-import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RatingsViewModel extends ViewModel {
-    private static final int DEFAULT_PAGE_LIMIT = 5;
+    private static final int DEFAULT_PAGE_LIMIT = 50;
     private static final int DEFAULT_START_PAGE = 1;
     private int pageNumber = DEFAULT_START_PAGE;
     private Map<String, Object> savedQueryParams = new HashMap<>();
@@ -30,7 +30,7 @@ public class RatingsViewModel extends ViewModel {
         mText.setValue("This is watching fragment");
     }
 
-    public void init() {
+    public void init(OnDataLoadedListener onDataLoadedListener) {
         if(ratedAnimesLiveData != null){
             return;
         }
@@ -39,7 +39,18 @@ public class RatingsViewModel extends ViewModel {
         //reloadAnimes();
         User activeUser = SessionManager.getInstance().getActiveUser();
         if (activeUser != null) {
-            reloadRatings();
+            reloadRatings(new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    // call the callback to notify the UI
+                    onDataLoadedListener.onDataLoaded();
+                }
+
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    onDataLoadedListener.onDataLoadFailed(errorMessage);
+                }
+            });
             ratedAnimesLiveData = ratingRepository.getRatingWithAnimeList();
         }
     }
@@ -71,7 +82,7 @@ public class RatingsViewModel extends ViewModel {
         return ratedAnimesLiveData;
     }
 
-    public void reloadRatings() {
+    public void reloadRatings(OnDataLoadedListener onDataLoadedListener) {
         pageNumber = DEFAULT_START_PAGE;
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("watchStatus", "watching");
@@ -79,18 +90,40 @@ public class RatingsViewModel extends ViewModel {
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
         ratingRepository.clearRatingWithAnimeList();
-        ratingRepository.loadMore(queryParams);
+        ratingRepository.loadMore(queryParams, new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // call the callback to notify the UI
+                onDataLoadedListener.onDataLoaded();
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
         refreshCompleteLiveData.setValue(true);
     }
 
-    public void refreshRatings() {
+    public void refreshRatings(OnDataLoadedListener onDataLoadedListener) {
         pageNumber = DEFAULT_START_PAGE;
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.putAll(savedQueryParams);
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
         ratingRepository.clearRatingWithAnimeList();
-        ratingRepository.loadMore(queryParams);
+        ratingRepository.loadMore(queryParams, new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // call the callback to notify the UI
+                onDataLoadedListener.onDataLoaded();
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
         refreshCompleteLiveData.setValue(true);
     }
 
@@ -98,13 +131,26 @@ public class RatingsViewModel extends ViewModel {
      * Loads more ratings into the list.
      * Loads more ratings into the list by increasing the page number and calling the API again.
      */
-    public void loadMore() {
+    public void loadMoreData(OnDataLoadedListener onDataLoadedListener) {
         pageNumber++;
         Map<String,Object> queryParams = new HashMap<>();
         queryParams.putAll(savedQueryParams);
         queryParams.putAll(getDefaultQueryParams());
         // Load more data and append to the list
-        ratingRepository.loadMore(queryParams);
+        ratingRepository.loadMore(queryParams, new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                isLoading = false;
+                // Call the callback to notify the UI
+                onDataLoadedListener.onDataLoaded();
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                isLoading = false;
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
     }
 
     /**

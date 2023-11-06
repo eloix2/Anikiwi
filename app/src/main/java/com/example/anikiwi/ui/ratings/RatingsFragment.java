@@ -33,6 +33,7 @@ import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.networking.User;
 import com.example.anikiwi.ui.anime.AnimeViewModel;
 import com.example.anikiwi.ui.animedata.AnimeDataActivity;
+import com.example.anikiwi.utilities.OnDataLoadedListener;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -53,14 +54,30 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
                              ViewGroup container, Bundle savedInstanceState) {
         ratingsViewModel =
                 new ViewModelProvider(this).get(RatingsViewModel.class);
-        ratingsViewModel.init();
+
         binding = FragmentRatingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         linearLayoutError = binding.llErrorRating;
+        // Sets the visibility of the error layout to GONE every time the fragment is created
+        // This is done to avoid the error layout staying visible after the user navigates back to the fragment
+        linearLayoutError.setVisibility(View.GONE);
         floatingActionButtonRetry = binding.fabRetry;
-        //noResult = binding.tvErrorRating;
         progressBar = binding.pbRating;
 
+        ratingsViewModel.init(new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                ratingAdapter.notifyDataSetChanged();
+                linearLayoutError.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                linearLayoutError.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
         // Custom Toolbar
         setFragmentToolbar(root);
         setToolbarMenu();
@@ -69,13 +86,23 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         floatingActionButtonRetry.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
             linearLayoutError.setVisibility(View.GONE);
-            //floatingActionButtonRetry.setVisibility(View.GONE);
-            //noResult.setVisibility(View.GONE);
-            ratingsViewModel.reloadRatings();
+            ratingsViewModel.reloadRatings(new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    // Update the UI with the new data
+                    ratingAdapter.notifyDataSetChanged();
+                    linearLayoutError.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    linearLayoutError.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
         });
 
-        //final TextView textView = binding.textWatching;
-        //ratingsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         initObserver(ratingsViewModel);
         initRecyclerView();
         initScrollListener(ratingsViewModel);
@@ -86,62 +113,70 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
     private void configSwipe() {
         binding.ratingsSwipeRefreshLayout.setColorSchemeResources(R.color.md_theme_dark_primary);
         binding.ratingsSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.md_theme_dark_onPrimary);
-
-        ratingsViewModel.getRefreshCompleteObserver().observe(getViewLifecycleOwner(), refreshComplete -> {
-            if (refreshComplete) {
-                binding.ratingsSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
         binding.ratingsSwipeRefreshLayout.setOnRefreshListener(() -> {
-            ratingsViewModel.refreshRatings();
+            ratingsViewModel.refreshRatings(new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    if (isAdded()){
+                        // Update the UI with the new data
+                        ratingAdapter.notifyDataSetChanged();
+                        // Hide the loading indicator
+                        binding.ratingsSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    if(isAdded()) {
+                        // Hide the loading indicator
+                        binding.ratingsSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            });
         });
     }
 
     public void initScrollListener(RatingsViewModel ratingsViewModel) {
         RecyclerView recyclerView = binding.rvRating;
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState){
-                super.onScrollStateChanged(recyclerView, newState);
-            }
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (!ratingsViewModel.isLoading()) {
                     if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == ratings.size() - 1) {
-                        // bottom of list!
                         ratingsViewModel.setLoading(true);
-                        loadMore(ratingsViewModel);
+                        loadMoreData(ratingsViewModel);
                     }
                 }
             }
-
-            //Todo: He cambiado la manera en la que se invoca a la progress bar para no meterla en el reciclerview, esto lo ha arreglado. En caso que lo deje así lo ideal quizas es borrar lo que tenga que ver con la antigua progress bar
-
-            private void loadMore(RatingsViewModel ratingsViewModel) {
-
-                progressBar.setVisibility(View.VISIBLE);
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //load more data from the viewmodel
-                        ratingsViewModel.loadMore();
-                        //adapter.notifyDataSetChanged();
-
-                        ratingsViewModel.setLoading(false);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, 1000);
-            }
         });
-
     }
 
-//    private void initScrollListener(RatingsViewModel ratingsViewModel) {
-//
-//    }
+    private void loadMoreData(RatingsViewModel ratingsViewModel) {
+        // Show a loading indicator here
+        progressBar.setVisibility(View.VISIBLE);
+
+        ratingsViewModel.loadMoreData(new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // Update the UI with the new data
+                ratingAdapter.notifyDataSetChanged();
+
+                // Hide the loading indicator
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                // Handle data load failure, show an error message to the user if needed
+                // Hide the loading indicator
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
 
     private void initRecyclerView() {
         RecyclerView recyclerView = binding.rvRating;
@@ -158,20 +193,8 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
                 if (ratingWithAnimes != null) {
                     ratings = ratingWithAnimes;
                     ratingAdapter.setRatings(ratingWithAnimes); // Update the adapter
-                    progressBar.setVisibility(View.GONE);
-                    linearLayoutError.setVisibility(View.GONE);
-                    //floatingActionButtonRetry.setVisibility(View.GONE);
-                    //noResult.setVisibility(View.GONE);
-                } else {
-                    // Handle the case where there are no results
-                    progressBar.setVisibility(View.GONE);
-                    linearLayoutError.setVisibility(View.VISIBLE);
-                    //floatingActionButtonRetry.setVisibility(View.VISIBLE);
-                    //noResult.setVisibility(View.VISIBLE);
                 }
             });
-        } else {
-            // Handle the case where activeUser is null
         }
     }
 
@@ -241,6 +264,15 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         popupMenu.show();
     }
 
+    // Called when the fragment is no longer in use
+    @Override
+    public void onStop(){
+        super.onStop();
+        // Clear the menu provider when the fragment is stopped
+        binding.ratingsSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    // Called when the fragment is destroyed
     @Override
     public void onDestroyView() {
         super.onDestroyView();

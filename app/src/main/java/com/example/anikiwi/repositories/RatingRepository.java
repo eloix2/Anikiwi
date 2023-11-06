@@ -9,6 +9,7 @@ import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.RetrofitClient;
+import com.example.anikiwi.utilities.OnDataLoadedListener;
 
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,7 @@ public class RatingRepository {
         return ratedAnimesLiveData;
     }
 
-    public void loadMore(Map<String, Object> queryParams) {
+    public void loadMore(Map<String, Object> queryParams, OnDataLoadedListener onDataLoadedListener) {
         APIs api = RetrofitClient.getInstance().getApis();
         Call<List<RatingWithAnime>> call = api.getRatingsQuery(queryParams);
         call.enqueue(new Callback<List<RatingWithAnime>>() {
@@ -120,7 +121,7 @@ public class RatingRepository {
             public void onResponse(Call<List<RatingWithAnime>> call, Response<List<RatingWithAnime>> response) {
                 if(response.body() == null){
                     Log.d("RatingRepository", "LoadMore onResponse: response.body() == null");
-                    ratedAnimesLiveData.postValue(null);
+                    onDataLoadedListener.onDataLoadFailed("Response body is null");
                     return;
                 }
 
@@ -133,12 +134,14 @@ public class RatingRepository {
                     oldRatings.addAll(response.body());
                 }
                 ratedAnimesLiveData.postValue(oldRatings);
+
+                onDataLoadedListener.onDataLoaded();
             }
 
             @Override
             public void onFailure(Call<List<RatingWithAnime>> call, Throwable t) {
                 Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
-                ratedAnimesLiveData.postValue(null);
+                onDataLoadedListener.onDataLoadFailed(t.getMessage());
             }
         });
     }

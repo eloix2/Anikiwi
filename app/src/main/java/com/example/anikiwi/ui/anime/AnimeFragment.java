@@ -3,8 +3,6 @@ package com.example.anikiwi.ui.anime;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,7 +44,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
     private FragmentAnimeBinding binding;
     private List<Anime> animes;
-    private AnimeAdapter adapter;
+    private AnimeAdapter animeAdapter;
     boolean isLoading = false;
     ProgressBar progressBar;
     FloatingActionButton floatingActionButtonRetry;
@@ -76,7 +73,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
             @Override
             public void onDataLoaded() {
                 // Update the UI with the new data
-                adapter.notifyDataSetChanged();
+                animeAdapter.notifyDataSetChanged();
                 linearLayoutError.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
             }
@@ -101,7 +98,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                 @Override
                 public void onDataLoaded() {
                     // Update the UI with the new data
-                    adapter.notifyDataSetChanged();
+                    animeAdapter.notifyDataSetChanged();
                     linearLayoutError.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
                 }
@@ -155,17 +152,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         animeViewModel.getAnimesObserver().observe(getViewLifecycleOwner(), anime -> {
             if(anime != null) {
                 animes = anime;
-                adapter.setAnimes(animes);
-                //progressBar.setVisibility(View.GONE);
-                //linearLayoutError.setVisibility(View.GONE);
-                //floatingActionButtonRetry.setVisibility(View.GONE);
-                //noResult.setVisibility(View.GONE);
-            }
-            else {
-                //progressBar.setVisibility(View.GONE);
-                //linearLayoutError.setVisibility(View.VISIBLE);
-                //floatingActionButtonRetry.setVisibility(View.VISIBLE);
-                //noResult.setVisibility(View.VISIBLE);
+                animeAdapter.setAnimes(animes);
             }
         });
     }
@@ -173,31 +160,41 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
         RecyclerView recyclerView = binding.rvAnime;
         //recyclerView.getRecycledViewPool().clear(); operacion costosa
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new AnimeAdapter(this.getContext(), animes, this);
-        recyclerView.setAdapter(adapter);
+        animeAdapter = new AnimeAdapter(this.getContext(), animes, this);
+        recyclerView.setAdapter(animeAdapter);
     }
 
     private void configSwipe() {
         binding.animeSwipeRefreshLayout.setColorSchemeResources(R.color.md_theme_dark_primary);
         binding.animeSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.md_theme_dark_onPrimary);
-
         binding.animeSwipeRefreshLayout.setOnRefreshListener(() -> {
             animeViewModel.refreshAnimes(new OnDataLoadedListener() {
                 @Override
                 public void onDataLoaded() {
-                    // Update the UI with the new data
-                    adapter.notifyDataSetChanged();
-                    binding.animeSwipeRefreshLayout.setRefreshing(false);
+                    if(isAdded()) {
+                        // Update the UI with the new data
+                        animeAdapter.notifyDataSetChanged();
+                        binding.animeSwipeRefreshLayout.setRefreshing(false);
+                    }
                 }
 
                 @Override
                 public void onDataLoadFailed(String errorMessage) {
-                    binding.animeSwipeRefreshLayout.setRefreshing(false);
+                    if(isAdded()) {
+                        binding.animeSwipeRefreshLayout.setRefreshing(false);
+                    }
                 }
             });
         });
     }
 
+    // Called when the fragment is no longer in use
+    @Override
+    public void onStop(){
+        super.onStop();
+        // Clear the menu provider when the fragment is stopped
+        binding.animeSwipeRefreshLayout.setRefreshing(false);
+    }
 
     @Override
     public void onDestroyView() {
@@ -244,7 +241,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
             @Override
             public void onDataLoaded() {
                 // Update the UI with the new data
-                adapter.notifyDataSetChanged();
+                animeAdapter.notifyDataSetChanged();
 
                 // Hide the loading indicator
                 progressBar.setVisibility(View.GONE);
@@ -333,7 +330,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                     @Override
                     public void onDataLoaded() {
                         // Update the UI with the new data
-                        adapter.notifyDataSetChanged();
+                        animeAdapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
                         linearLayoutError.setVisibility(View.GONE);
                     }
