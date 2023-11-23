@@ -22,13 +22,6 @@ public class RatingRepository {
 
     //singleton
     private static RatingRepository instance;
-
-    // Puede servir para guardar los animes que tienen rating
-    //private static MutableLiveData<List<Anime>> animes = new MutableLiveData<>();
-
-    //private static MutableLiveData<Anime> anime = new MutableLiveData<>();
-
-    //private static MutableLiveData<List<Rating>> ratings = new MutableLiveData<>();
     private static MutableLiveData<Rating> rating = new MutableLiveData<>();
     private static MutableLiveData<List<RatingWithAnime>> ratedAnimesLiveData = new MutableLiveData<>();
 

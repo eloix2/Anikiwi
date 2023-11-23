@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +38,7 @@ import com.example.anikiwi.utilities.OnDataLoadedListener;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RatingsFragment extends Fragment implements RatingAdapter.ItemClickListener {
@@ -63,7 +65,8 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         linearLayoutError.setVisibility(View.GONE);
         floatingActionButtonRetry = binding.fabRetry;
         progressBar = binding.pbRating;
-
+        ratingAdapter = new RatingAdapter(this.getContext(), new ArrayList<>(), this);
+        Log.println(Log.INFO, "RatingsFragment", "onCreateView: " + ratingsViewModel.getWatchStatus().getValue());
         ratingsViewModel.init(new OnDataLoadedListener() {
             @Override
             public void onDataLoaded() {
@@ -182,7 +185,6 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         RecyclerView recyclerView = binding.rvRating;
         //recyclerView.getRecycledViewPool().clear(); operacion costosa
         recyclerView.setLayoutManager(new WrapContentLinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
-        ratingAdapter = new RatingAdapter(this.getContext(), ratings, this);
         recyclerView.setAdapter(ratingAdapter);
     }
 
