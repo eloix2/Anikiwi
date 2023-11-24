@@ -18,6 +18,8 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -73,23 +75,9 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.tv_anime_title.setText(this.animes.get(position).getTitle());
         holder.itemView.setOnClickListener(v -> clickListener.onAnimeClick(animes.get(position)));
         Glide.with(context)
-                .asBitmap()
                 .load(this.animes.get(position).getImage_url())
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), resource);
-                        roundedBitmapDrawable.setCornerRadius(18.0f); // You can adjust the corner radius as needed
-                        roundedBitmapDrawable.setAntiAlias(true); // This improves the quality of the rounding
-
-                        holder.img_anime.setImageDrawable(roundedBitmapDrawable);
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                    }
-                });
+                .transform(new CenterCrop(), new RoundedCorners(18)) // Adjust the corner radius as needed
+                .into(holder.img_anime);
     }
 
     //todo: borrar esto
