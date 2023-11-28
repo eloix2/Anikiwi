@@ -4,23 +4,62 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.Objects;
+import com.example.anikiwi.networking.Anime;
+import com.example.anikiwi.networking.SessionManager;
+import com.example.anikiwi.repositories.AnimeRepository;
+import com.example.anikiwi.utilities.OnDataLoadedListener;
+
+import java.util.List;
 
 public class ProfileViewModel extends ViewModel {
+    private MutableLiveData<List<Anime>> recommendedAnimesLiveData;
+    private AnimeRepository animeRepository;
 
-    private final MutableLiveData<String> mText;
+    public void init(OnDataLoadedListener onDataLoadedListener) {
+        if(recommendedAnimesLiveData != null && recommendedAnimesLiveData.getValue() != null){
+            // Data is already loaded, notify the UI directly
+            onDataLoadedListener.onDataLoaded();
+            return;
+        }
+        recommendedAnimesLiveData = new MutableLiveData<>();
+        animeRepository = AnimeRepository.getInstance();
+        // Refreshes the animes list by calling and saving the savedQueryParams
+        reloadRecommendedAnimes(new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // call the callback to notify the UI
+                onDataLoadedListener.onDataLoaded();
+            }
 
-    public ProfileViewModel() {
-        mText = new MutableLiveData<>();
-        //to get name of the user authenticated in the session
-        //Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName();
-        //para hacer el sign out, además de volver al login
-        //FirebaseAuth.getInstance().signOut();
-        mText.setValue("This is profile fragment");
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public void reloadRecommendedAnimes(OnDataLoadedListener onDataLoadedListener) {
+        animeRepository.makeRecommendedApiCall(getActiveUserId(), new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // call the callback to notify the UI
+                recommendedAnimesLiveData = animeRepository.getRecommendations();
+                onDataLoadedListener.onDataLoaded();
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
     }
 
+    public String getActiveUserId() {
+        return SessionManager.getInstance().getActiveUser().getId();
+    }
+
+
+    public LiveData<List<Anime>> getRecommendations() {
+        return recommendedAnimesLiveData;
+    }
 }

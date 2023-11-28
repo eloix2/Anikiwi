@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.Rating;
+import com.example.anikiwi.networking.RecommendationResponse;
 import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.User;
@@ -27,6 +28,7 @@ public class AnimeRepository {
     private static AnimeRepository instance;
     private static MutableLiveData<List<Anime>> animes = new MutableLiveData<>();
     private static MutableLiveData<Anime> anime = new MutableLiveData<>();
+    private static MutableLiveData<List<Anime>> recommendedAnimesLiveData = new MutableLiveData<>();
 
     public static AnimeRepository getInstance() {
         if (instance == null) {
@@ -129,5 +131,33 @@ public class AnimeRepository {
 
     public void clearAnimeList() {
         animes.postValue(null);
+    }
+
+    public MutableLiveData<List<Anime>> getRecommendations() {
+        return recommendedAnimesLiveData;
+    }
+
+    public void makeRecommendedApiCall(String userId, OnDataLoadedListener onDataLoadedListener) {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<RecommendationResponse> call = api.getRecommendedAnimes(userId);
+        call.enqueue(new Callback<RecommendationResponse>() {
+            @Override
+            public void onResponse(Call<RecommendationResponse> call, Response<RecommendationResponse> response) {
+                if(response.body() == null){
+                    Log.d("AnimeRepository", "LoadMore onResponse: response.body() == null");
+                    onDataLoadedListener.onDataLoadFailed("Response body is null");
+                    return;
+                }
+
+                recommendedAnimesLiveData.postValue(response.body().getRecommendations());
+                onDataLoadedListener.onDataLoaded();
+            }
+
+            @Override
+            public void onFailure(Call<RecommendationResponse> call, Throwable t) {
+                Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
+                onDataLoadedListener.onDataLoadFailed(t.getMessage());
+            }
+        });
     }
 }

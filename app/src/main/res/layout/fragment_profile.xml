@@ -36,7 +36,7 @@
                 android:id="@+id/profileImageView"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:src="@drawable/ic_launcher_background"
+                android:src="@drawable/kiwi"
                 android:layout_gravity="center"
                 android:layout_marginBottom="8dp" />
 
@@ -96,7 +96,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/kiwi"
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true" />
 
@@ -110,7 +110,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/kiwi"
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true" />
 
@@ -124,7 +124,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/kiwi"
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true" />
 
@@ -138,6 +138,17 @@
                 android:layout_marginTop="16dp"
                 android:text="Change Recommendations"
                 android:layout_gravity="center" />
+
+            <!-- Loading Circle -->
+            <ProgressBar
+                android:id="@+id/recommendationsProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:indeterminateTint="?colorPrimary"
+                android:visibility="gone" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

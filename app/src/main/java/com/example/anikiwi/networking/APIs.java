@@ -44,6 +44,9 @@ public interface APIs {
     @GET("ratings/search")
     Call<List<RatingWithAnime>> getRatingsQuery(@QueryMap Map<String, Object> queryParams);
 
+    @GET("users/{userId}/recommendations")
+    Call<RecommendationResponse> getRecommendedAnimes(@Path("userId") String userId);
+    
     //@GET("animes/search/limit=50")
     //Call<List<Anime>> filterAnimes(@Query("page") String text);
 }

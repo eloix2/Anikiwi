@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +36,9 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.anikiwi.MainActivity;
 import com.example.anikiwi.R;
 import com.example.anikiwi.databinding.FragmentProfileBinding;
+import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.SessionManager;
+import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.ui.login.LoginActivity;
 import com.example.anikiwi.utilities.OnDataLoadedListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -53,16 +56,19 @@ public class ProfileFragment extends Fragment {
     private GoogleSignInClient mGoogleSignInClient;
     private ImageView profileImage;
     private TextView profileName;
+    private Button changeRecommendationsButton;
+    private ProfileViewModel profileViewModel;
+    private ProgressBar recommendationsProgressBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel profileViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         //set profile image using glide and the firebase profile image
         profileImage = binding.profileImageView;
+        recommendationsProgressBar = binding.recommendationsProgressBar;
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -88,20 +94,50 @@ public class ProfileFragment extends Fragment {
         profileName = binding.profileName;
         profileName.setText(currentUser.getDisplayName());
 
-        // set recommendations animes images to test
-        ImageView anime1 = binding.image1;
-        ImageView anime2 = binding.image2;
-        ImageView anime3 = binding.image3;
+        profileViewModel.init(new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                if(isAdded()) {
+                    updateUIWithRecommendations();
+                }
+            }
 
-        setRoundedImage("https://cdn.myanimelist.net/images/anime/11/39717.jpg", anime1);
-        setRoundedImage("https://cdn.myanimelist.net/images/anime/1671/127574.jpg", anime2);
-        setRoundedImage("https://cdn.myanimelist.net/images/anime/12/81160.jpg", anime3);
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                if(isAdded()) {
+                    Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
+        // Set onclick listener for button
+        changeRecommendationsButton = binding.btnChangeRecommendations;
+        changeRecommendationsButton.setOnClickListener(v -> {
+            // Hides the button
+            changeRecommendationsButton.setVisibility(View.GONE);
+            // Show the progress bar
+            recommendationsProgressBar.setVisibility(View.VISIBLE);
+            // Reload the recommendations
+            profileViewModel.reloadRecommendedAnimes(new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    if(isAdded()) {
+                        updateUIWithRecommendations();
+                        recommendationsProgressBar.setVisibility(View.GONE);
+                        changeRecommendationsButton.setVisibility(View.VISIBLE);
+                    }
+                }
 
-
-
-
-
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    if(isAdded()){
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                        recommendationsProgressBar.setVisibility(View.GONE);
+                        changeRecommendationsButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        });
 
         //final TextView textView = binding.textProfile;
         //profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
@@ -109,6 +145,46 @@ public class ProfileFragment extends Fragment {
         setFragmentToolbar(root);
         setToolbarMenu(root);
         return root;
+    }
+
+    private void updateUIWithRecommendations() {
+        // Use the existing instance of ProfileViewModel obtained through ViewModelProvider
+        profileViewModel.getRecommendations().observe(getViewLifecycleOwner(), recommendedAnimes -> {
+            // Get the ImageView for the first anime
+            ImageView anime1 = binding.image1;
+            // Get the ImageView for the second anime
+            ImageView anime2 = binding.image2;
+            // Get the ImageView for the third anime
+            ImageView anime3 = binding.image3;
+
+            // Set the image for the first anime
+            setRoundedImage(recommendedAnimes.get(0).getImageUrl(), anime1);
+            // Set the image for the second anime
+            setRoundedImage(recommendedAnimes.get(1).getImageUrl(), anime2);
+            // Set the image for the third anime
+            setRoundedImage(recommendedAnimes.get(2).getImageUrl(), anime3);
+
+            // Set OnClickListener for the first anime
+            anime1.setOnClickListener(view -> onAnimeImageClick(recommendedAnimes.get(0)));
+
+            // Set OnClickListener for the second anime
+            anime2.setOnClickListener(view -> onAnimeImageClick(recommendedAnimes.get(1)));
+
+            // Set OnClickListener for the third anime
+            anime3.setOnClickListener(view -> onAnimeImageClick(recommendedAnimes.get(2)));
+        });
+    }
+
+    // Handle the click event for anime images
+    private void onAnimeImageClick(Anime anime) {
+        Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
+        //intent a la activity de anime pasando el anime
+
+        Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);
+        intent.putExtra("anime_id", anime.getId()); // Pass anime id to the details activity
+        intent.putExtra("anime_title", anime.getTitle()); // Pass anime title to the details activity
+        // Add other data you want to pass to the AnimeDetailsActivity
+        this.requireContext().startActivity(intent);
     }
 
 
@@ -209,6 +285,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

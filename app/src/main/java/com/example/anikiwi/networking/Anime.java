@@ -35,11 +35,11 @@ public class Anime {
         return title;
     }
 
-    public String getImage_url() {
+    public String getImageUrl() {
         return image_url;
     }
 
-    public String getThumbnail_url() {
+    public String getThumbnailUrl() {
         return thumbnail_url;
     }
 

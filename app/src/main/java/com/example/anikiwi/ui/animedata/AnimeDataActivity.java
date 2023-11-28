@@ -30,8 +30,6 @@ import com.example.anikiwi.utilities.DateConverter;
 import com.example.anikiwi.utilities.InputFilterMinMax;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class AnimeDataActivity extends AppCompatActivity {
@@ -67,13 +65,13 @@ public class AnimeDataActivity extends AppCompatActivity {
 
                 // Add blurred background image with glide
                 Glide.with(this)
-                        .load(animeData.getImage_url())
+                        .load(animeData.getImageUrl())
                         .apply(RequestOptions.bitmapTransform(new BlurTransformation(10, 3)))
                         .into(binding.imageViewBackground);
 
                 // Add portrait image with glide
                 Glide.with(this)
-                        .load(animeData.getImage_url())
+                        .load(animeData.getImageUrl())
                         .into(binding.imageViewPortrait);
                 // Update other UI elements with relevant data
                 binding.textViewEpisodes.setText(animeData.getEpisodes());
