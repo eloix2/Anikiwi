@@ -303,7 +303,7 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
 
     @Override
     public void onRatingClick(RatingWithAnime rating) {
-        Toast.makeText(this.getContext(), rating.getAnime().getTitle(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getContext(), rating.getAnime().getTitle(), Toast.LENGTH_SHORT).show();
         //intent a la activity de anime pasando el anime
 
         Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);

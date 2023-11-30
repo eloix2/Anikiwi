@@ -1,127 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
-    <include
-        android:id="@+id/custom_Toolbar"
-        layout="@layout/custom_toolbar_layout" />
-<RelativeLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-    <!-- Upper Background Image -->
-    <ImageView
-        android:id="@+id/imageViewBackground"
+    android:layout_height="match_parent">
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_height="match_parent">
 
-    <!-- Upper Background Image -->
-    <ImageView
-        android:id="@+id/imageViewPortrait"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:scaleType="centerCrop"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="120dp"
-        android:src="@drawable/ic_launcher_background" />
-</RelativeLayout>
-    <!-- Anime Title -->
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <!-- Anime Description -->
-    <TextView
-        android:id="@+id/textViewDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Description"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="4dp" />
+            <!-- Include your custom toolbar layout -->
+            <include
+                android:id="@+id/custom_Toolbar"
+                layout="@layout/custom_toolbar_layout" />
 
-    <!-- Anime Score -->
-    <TextView
-        android:id="@+id/textViewScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Score"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="4dp" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-    <!-- Anime Episodes -->
-    <TextView
-        android:id="@+id/textViewEpisodes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Episodes"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="4dp" />
+                <!-- Upper Background Image -->
+                <ImageView
+                    android:id="@+id/imageViewBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/kiwi" />
 
-    <!-- Anime Type -->
-    <TextView
-        android:id="@+id/textViewType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Type"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="4dp" />
+                <!-- Upper Background Image -->
+                <ImageView
+                    android:id="@+id/imageViewPortrait"
+                    android:layout_width="100dp"
+                    android:layout_height="150dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="120dp"
+                    android:src="@drawable/kiwi" />
+            </RelativeLayout>
 
-    <!-- Anime Status -->
-    <TextView
-        android:id="@+id/textViewStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Status"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="4dp" />
+            <!-- Anime Title -->
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Anime Title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" />
 
-    <!-- Anime Season And Year-->
-    <TextView
-        android:id="@+id/textViewSeasonYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anime Season And Year"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="4dp" />
+            <!-- Anime Episodes -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="8dp">
 
-    <Button
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Episodes"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textViewEpisodes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Anime Type -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Type"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textViewType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Val" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Anime Status -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Status"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textViewStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Value from API" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Anime Season And Year -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Season And Year"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textViewSeasonYear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Value from API" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <!-- Tags CardView -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tags"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+
+                    <!-- Display this text when the tags are collapsed -->
+                    <TextView
+                        android:id="@+id/textViewTouchTags"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/touch_to_expand_the_tags"
+                        android:layout_marginTop="8dp"
+                        android:textColor="?colorOnSurfaceVariant"
+                        android:visibility="visible"/>
+
+                    <!-- Display Tags as comma-separated string -->
+                    <TextView
+                        android:id="@+id/textViewTags"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tag1, Tag2, Tag3"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Floating Rate Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/buttonRateAnime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rate Anime"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/baseline_rate_review_28"
+        app:backgroundTint="?colorPrimary"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:maxImageSize="30dp"
+        app:fabCustomSize="65dp"
+        android:contentDescription="Rate anime" />
 
-</LinearLayout>
+</FrameLayout>

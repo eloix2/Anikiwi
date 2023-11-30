@@ -177,7 +177,7 @@ public class ProfileFragment extends Fragment {
 
     // Handle the click event for anime images
     private void onAnimeImageClick(Anime anime) {
-        Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
         //intent a la activity de anime pasando el anime
 
         Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);

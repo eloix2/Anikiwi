@@ -139,7 +139,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
                 // Add else ifs for other menu items here
                 if (menuItem.getItemId() == R.id.action_search) {
                     // Handle search icon press
-                    Toast.makeText(getContext(), "Search icon pressed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Search icon pressed", Toast.LENGTH_SHORT).show();
                     showCustomDialog();
                     return true;
                 }
@@ -204,7 +204,7 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
     @Override
     public void onAnimeClick(Anime anime) {
-        Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getContext(), anime.getTitle(), Toast.LENGTH_SHORT).show();
         //intent a la activity de anime pasando el anime
 
         Intent intent = new Intent(this.getContext(), AnimeDataActivity.class);

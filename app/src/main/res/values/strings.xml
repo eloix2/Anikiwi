@@ -28,6 +28,7 @@
     <string name="Dropped">Dropped</string>
     <string name="anime_image">Anime Image</string>
     <string name="settings">Settings</string>
+    <string name="touch_to_expand_the_tags">Touch to expand the tags</string>
     <string-array name="seasons_array">
         <item />
         <item>SPRING</item>

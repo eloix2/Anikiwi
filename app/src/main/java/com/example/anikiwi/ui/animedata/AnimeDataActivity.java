@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,16 +79,45 @@ public class AnimeDataActivity extends AppCompatActivity {
                 binding.textViewStatus.setText(animeData.getStatus());
                 binding.textViewType.setText(animeData.getType());
                 binding.textViewSeasonYear.setText(animeData.getSeasonAndYear());
+                binding.textViewTags.setText(formatTags(animeData.getTags()));
 
+                binding.cardViewTags.setOnClickListener(v -> {
+                    toggleTagsVisibility();
+                });
                 // Add button
                 binding.buttonRateAnime.setOnClickListener(v -> {
                     showRateAnimeDialog(animeData);
                 });
 
-
             }
         });
     }
+
+    // TODO: Move this to a utility class
+    private String formatTags(String[] tags) {
+        if (tags == null || tags.length == 0) {
+            return "";
+        }
+
+        return TextUtils.join(", ", tags);
+    }
+
+    // Function to toggle visibility of tags
+    private void toggleTagsVisibility() {
+        TextView textViewTags = binding.textViewTags;
+        TextView textViewTouchTags = binding.textViewTouchTags;
+
+        if (textViewTags.getVisibility() == View.VISIBLE) {
+            // Tags are visible, collapse them
+            textViewTags.setVisibility(View.GONE);
+            textViewTouchTags.setVisibility(View.VISIBLE);
+        } else {
+            // Tags are collapsed, expand them
+            textViewTags.setVisibility(View.VISIBLE);
+            textViewTouchTags.setVisibility(View.GONE);
+        }
+    }
+
     // Sets the toolbar for the fragment
     private void setActivityToolbar(View root) {
         // Find the Toolbar in the fragment's layout
