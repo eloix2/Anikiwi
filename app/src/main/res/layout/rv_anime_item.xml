@@ -17,7 +17,7 @@
             android:id="@+id/img_anime"
             android:layout_width="80dp"
             android:layout_height="120dp"
-            android:src="@drawable/ic_launcher_background"
+            android:src="@drawable/kiwi"
             android:scaleType="centerCrop"
             android:contentDescription="@string/anime_image" />
 
@@ -29,22 +29,45 @@
             android:layout_marginStart="16dp"
             android:text="@string/title"
             android:textSize="18sp"
-            android:textColor="?colorOnSurfaceVariant"/>
+            android:textColor="?colorOnSurface"/>
 
-        <Button
-            android:id="@+id/btn_rate"
+        <!-- New TextView for the rating information -->
+        <TextView
+            android:id="@+id/tv_anime_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:text="Rate"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:minWidth="100dp"
-        />
+            android:layout_below="@id/tv_anime_title"
+            android:layout_toEndOf="@id/img_anime"
+            android:layout_marginStart="16dp"
+            android:text="TV"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurfaceVariant"/>
+
+        <!-- New TextView for the rating information -->
+        <TextView
+            android:id="@+id/tv_anime_season_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_anime_type"
+            android:layout_toEndOf="@id/img_anime"
+            android:layout_marginStart="16dp"
+            android:text="WINTER 2020"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurfaceVariant"/>
+
+        <!-- New TextView for the rating information -->
+        <TextView
+            android:id="@+id/tv_anime_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_anime_season_year"
+            android:layout_toEndOf="@id/img_anime"
+            android:layout_marginStart="16dp"
+            android:text="ONGOING"
+            android:textSize="14sp"
+            android:textColor="?colorOnSurfaceVariant"/>
+
+
 
     </RelativeLayout>
 
