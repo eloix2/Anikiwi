@@ -1,0 +1,18 @@
+Project Licenses
+================
+
+1. AndroidX Libraries and Third-Party Libraries:
+   - androidx.appcompat, com.google.android.material, androidx.constraintlayout, androidx.lifecycle, androidx.navigation, androidx.swiperefreshlayout
+   - com.squareup.retrofit2:retrofit, com.squareup.retrofit2:converter-gson, com.squareup.okhttp3:okhttp, com.github.bumptech.glide:glide, jp.wasabeef:glide-transformations
+   - Apache License 2.0
+   - https://www.apache.org/licenses/LICENSE-2.0
+
+2. Firebase Libraries:
+   - com.google.firebase:firebase-auth, com.google.android.gms:play-services-auth
+   - Firebase Terms of Service
+   - https://firebase.google.com/terms
+
+3. JUnit:
+   - junit:junit
+   - Eclipse Public License - v 1.0
+   - https://www.eclipse.org/legal/epl-v10.html
