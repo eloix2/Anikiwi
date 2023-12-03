@@ -57,13 +57,13 @@
 
         <!-- New TextView for the rating information -->
         <TextView
-            android:id="@+id/tv_rating_ended"
+            android:id="@+id/tv_rating_finished"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_rating_started"
             android:layout_toEndOf="@id/img_rating"
             android:layout_marginStart="16dp"
-            android:text="Ended: 2020-01-02"
+            android:text="Finished: 2020-01-02"
             android:textSize="14sp"
             android:textColor="?colorOnSurfaceVariant"/>
 
@@ -71,7 +71,7 @@
             android:id="@+id/tv_episode_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_rating_ended"
+            android:layout_below="@id/tv_rating_finished"
             android:layout_toEndOf="@id/img_rating"
             android:layout_alignBaseline="@id/btn_add_episode"
             android:layout_marginTop="16dp"
@@ -85,7 +85,7 @@
             android:id="@+id/btn_add_episode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_rating_ended"
+            android:layout_below="@id/tv_rating_finished"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             android:text="+1"

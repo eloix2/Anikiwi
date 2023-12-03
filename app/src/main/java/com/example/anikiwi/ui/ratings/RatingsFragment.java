@@ -312,4 +312,42 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         // Add other data you want to pass to the AnimeDetailsActivity
         this.requireContext().startActivity(intent);
     }
+
+    @Override
+    public void onAddEpisodeClick(RatingWithAnime rating) {
+        int maxEpisodes = rating.getAnime().getEpisodes();
+        int currentEpisodesWatched = rating.getEpisodesWatched();
+
+        if (currentEpisodesWatched < maxEpisodes) {
+            // Increment episodes watched if within the limit
+            rating.incrementEpisodesWatched();
+
+            // Notify the adapter that the item has changed
+            int position = ratings.indexOf(rating);
+            if (position != -1) {
+                ratingAdapter.notifyItemChanged(position);
+            }
+
+            // Call ViewModel method to add an episode
+            ratingsViewModel.addEpisodeToRating(rating.getId(), new OnDataLoadedListener() {
+                @Override
+                public void onDataLoaded() {
+                    // Handle data loaded (optional)
+                }
+
+                @Override
+                public void onDataLoadFailed(String errorMessage) {
+                    // Handle data load failure, e.g., show an error message
+                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            // Handle case where the maximum episodes have already been watched
+            Toast.makeText(getContext(), "You have already watched all the episodes", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
 }

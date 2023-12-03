@@ -111,4 +111,8 @@ public class RatingWithAnime {
     public String getFinishedDate() {
         return finishedDate;
     }
+
+    public void incrementEpisodesWatched() {
+        this.episodesWatched++;
+    }
 }

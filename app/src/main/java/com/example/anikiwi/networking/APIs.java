@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -46,7 +47,10 @@ public interface APIs {
 
     @GET("users/{userId}/recommendations")
     Call<RecommendationResponse> getRecommendedAnimes(@Path("userId") String userId);
-    
+
+    @PUT("rating/{id}/addEpisode")
+    Call<RatingWithAnime> addEpisodeToRating(@Path("id") String ratingId);
+
     //@GET("animes/search/limit=50")
     //Call<List<Anime>> filterAnimes(@Query("page") String text);
 }

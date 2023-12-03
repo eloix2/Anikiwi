@@ -66,6 +66,9 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void setAnimeItem(ItemViewHolder holder, int position) {
         holder.tv_anime_title.setText(this.animes.get(position).getTitle());
         holder.itemView.setOnClickListener(v -> clickListener.onAnimeClick(animes.get(position)));
+        holder.tv_anime_type.setText(this.animes.get(position).getType());
+        holder.tv_anime_season_year.setText(this.animes.get(position).getSeasonAndYear());
+        holder.tv_anime_status.setText(this.animes.get(position).getStatus());
         Glide.with(context)
                 .load(this.animes.get(position).getImageUrl())
                 .transform(new CenterCrop(), new RoundedCorners(18)) // Adjust the corner radius as needed
@@ -91,10 +94,16 @@ public class AnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView tv_anime_title;
         ImageView img_anime;
+        TextView tv_anime_type;
+        TextView tv_anime_season_year;
+        TextView tv_anime_status;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_anime_title = (TextView) itemView.findViewById(R.id.tv_anime_title);
             img_anime = (ImageView) itemView.findViewById(R.id.img_anime);
+            tv_anime_type = (TextView) itemView.findViewById(R.id.tv_anime_type);
+            tv_anime_season_year = (TextView) itemView.findViewById(R.id.tv_anime_season_year);
+            tv_anime_status = (TextView) itemView.findViewById(R.id.tv_anime_status);
         }
     }
 

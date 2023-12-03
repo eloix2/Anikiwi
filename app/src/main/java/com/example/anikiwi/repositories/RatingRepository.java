@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.anikiwi.networking.APIs;
-import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.networking.RatingWithAnime;
 import com.example.anikiwi.networking.RetrofitClient;
@@ -138,6 +137,27 @@ public class RatingRepository {
             }
         });
     }
+
+    public void addEpisodeToRating(String ratingId, OnDataLoadedListener callback) {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<RatingWithAnime> call = api.addEpisodeToRating(ratingId);
+        call.enqueue(new Callback<RatingWithAnime>() {
+            @Override
+            public void onResponse(Call<RatingWithAnime> call, Response<RatingWithAnime> response) {
+                if (response.isSuccessful()) {
+                    callback.onDataLoaded();
+                } else {
+                    callback.onDataLoadFailed(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RatingWithAnime> call, Throwable t) {
+                callback.onDataLoadFailed(t.getMessage());
+            }
+        });
+    }
+
 
     public void clearRatingWithAnimeList() {
         ratedAnimesLiveData.postValue(null);

@@ -196,6 +196,21 @@ public class RatingsViewModel extends ViewModel {
         return refreshCompleteLiveData;
     }
 
+    //Do Add episodes to rating api call
+    public void addEpisodeToRating(String ratingId, OnDataLoadedListener onDataLoadedListener) {
+        ratingRepository.addEpisodeToRating(ratingId, new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                onDataLoadedListener.onDataLoaded();
+            }
 
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
+
+
+    }
 
 }
