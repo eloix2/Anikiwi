@@ -35,6 +35,7 @@ import com.example.anikiwi.networking.User;
 import com.example.anikiwi.ui.anime.AnimeViewModel;
 import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.utilities.OnDataLoadedListener;
+import com.example.anikiwi.utilities.ToolbarUtil;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -82,7 +83,8 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
             }
         });
         // Custom Toolbar
-        setFragmentToolbar(root);
+        String status = ratingsViewModel.getWatchStatus().getValue();
+        ToolbarUtil.setCustomToolbar((AppCompatActivity) requireActivity(), root, "Ratings -> " + status.substring(0, 1).toUpperCase() + status.substring(1));
         setToolbarMenu(root);
 
         // Retry button
@@ -200,15 +202,6 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         }
     }
 
-    // Sets the toolbar for the fragment
-    private void setFragmentToolbar(View root) {
-        // Find the Toolbar in the fragment's layout
-        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
-        String status = ratingsViewModel.getWatchStatus().getValue();
-        toolbar.setTitle("Ratings -> " + status.substring(0, 1).toUpperCase() + status.substring(1));
-        // Set the Toolbar as the ActionBar
-        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
-    }
     // Sets the menu for the toolbar
     private void setToolbarMenu(View root) {
         requireActivity().addMenuProvider(new MenuProvider() {

@@ -40,11 +40,14 @@ import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.ui.animedata.AnimeDataActivity;
 import com.example.anikiwi.ui.login.LoginActivity;
+import com.example.anikiwi.ui.statistics.StatisticsActivity;
 import com.example.anikiwi.utilities.OnDataLoadedListener;
+import com.example.anikiwi.utilities.ToolbarUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -59,6 +62,7 @@ public class ProfileFragment extends Fragment {
     private Button changeRecommendationsButton;
     private ProfileViewModel profileViewModel;
     private ProgressBar recommendationsProgressBar;
+    private FloatingActionButton buttonStats;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +73,13 @@ public class ProfileFragment extends Fragment {
         //set profile image using glide and the firebase profile image
         profileImage = binding.profileImageView;
         recommendationsProgressBar = binding.recommendationsProgressBar;
+        buttonStats = binding.buttonStats;
+
+        buttonStats.setOnClickListener(v -> {
+            Intent intent = new Intent(this.getContext(), StatisticsActivity.class);
+            intent.putExtra("user_id", SessionManager.getInstance().getActiveUser().getId());
+            startActivity(intent);
+        });
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -142,7 +153,7 @@ public class ProfileFragment extends Fragment {
         //final TextView textView = binding.textProfile;
         //profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         // Custom Toolbar
-        setFragmentToolbar(root);
+        ToolbarUtil.setCustomToolbar((AppCompatActivity) this.requireActivity(), root, "Profile");
         setToolbarMenu(root);
         return root;
     }
@@ -187,15 +198,6 @@ public class ProfileFragment extends Fragment {
         this.requireContext().startActivity(intent);
     }
 
-
-    // Sets the toolbar for the fragment
-    private void setFragmentToolbar(View root) {
-        // Find the Toolbar in the fragment's layout
-        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
-        toolbar.setTitle("Profile");
-        // Set the Toolbar as the ActionBar
-        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
-    }
     // Sets the menu for the toolbar
     private void setToolbarMenu(View root) {
         requireActivity().addMenuProvider(new MenuProvider() {

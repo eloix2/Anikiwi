@@ -29,6 +29,7 @@ import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.utilities.DateConverter;
 import com.example.anikiwi.utilities.InputFilterMinMax;
+import com.example.anikiwi.utilities.ToolbarUtil;
 
 import java.util.Calendar;
 
@@ -43,12 +44,8 @@ public class AnimeDataActivity extends AppCompatActivity {
         binding = ActivityAnimeDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setActivityToolbar(binding.getRoot());
-        // Add back button
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        ToolbarUtil.setCustomToolbar(this, binding.getRoot(), "Anime Data");
+        ToolbarUtil.addBackButtonToCustomToolbar(this);
 
         binding.textViewTitle.setText(getIntent().getStringExtra("anime_title"));
 
@@ -118,15 +115,6 @@ public class AnimeDataActivity extends AppCompatActivity {
         }
     }
 
-    // Sets the toolbar for the fragment
-    private void setActivityToolbar(View root) {
-        // Find the Toolbar in the fragment's layout
-        Toolbar toolbar = root.findViewById(R.id.custom_Toolbar);
-        toolbar.setTitle("Anime Data");
-        // Set the Toolbar as the ActionBar
-        (this).setSupportActionBar(toolbar);
-    }
-
     //add back button functionality replicating the behaviour of real android back button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -144,144 +132,119 @@ public class AnimeDataActivity extends AppCompatActivity {
         View dialogView = inflater.inflate(R.layout.dialog_rate_anime, null);
         builder.setView(dialogView);
 
-        // Set the max Episodes using animeData
         TextView textViewRateMaxEpisodes = dialogView.findViewById(R.id.textViewRateMaxEpisodes);
-        textViewRateMaxEpisodes.setText(animeData.getEpisodes());
-
-        EditText editTextRateEpisodes  = dialogView.findViewById(R.id.editTextRateEpisodes);
+        EditText editTextRateEpisodes = dialogView.findViewById(R.id.editTextRateEpisodes);
         EditText startingDateEditText = dialogView.findViewById(R.id.editTextStartingDate);
         EditText finishedDateEditText = dialogView.findViewById(R.id.editTextFinishedDate);
         EditText editTextRateScore = dialogView.findViewById(R.id.editTextRateScore);
-
-        // Set the filters for the number EditTexts
-
-        editTextRateEpisodes.setFilters(new InputFilter[]{ new InputFilterMinMax("0", animeData.getEpisodes()) });
-        editTextRateScore.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "10") });
-
-        // Set the onClickListeners for the Date EditTexts
-
-        startingDateEditText.setOnClickListener(v -> {
-            // on below line we are getting
-            // the instance of our calendar.
-            final Calendar c = Calendar.getInstance();
-
-            // on below line we are getting
-            // our day, month and year.
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // on below line we are creating a variable for date picker dialog.
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    (view, year1, monthOfYear, dayOfMonth) -> {
-                        // on below line we are setting date to our edit text.
-                        startingDateEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1);
-
-                    },
-                    // on below line we are passing year,
-                    // month and day for selected date in our date picker.
-                    year, month, day);
-            // at last we are calling show to
-            // display our date picker dialog.
-            datePickerDialog.show();
-        });
-
-        finishedDateEditText.setOnClickListener(v -> {
-            // on below line we are getting
-            // the instance of our calendar.
-            final Calendar c = Calendar.getInstance();
-
-            // on below line we are getting
-            // our day, month and year.
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // on below line we are creating a variable for date picker dialog.
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    (view, year1, monthOfYear, dayOfMonth) -> {
-                        // on below line we are setting date to our edit text.
-                        finishedDateEditText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1);
-
-                    },
-                    // on below line we are passing year,
-                    // month and day for selected date in our date picker.
-                    year, month, day);
-            // at last we are calling show to
-            // display our date picker dialog.
-            datePickerDialog.show();
-        });
-
-        //EditText editTextTitle = dialogView.findViewById(R.id.editTextTitle);
-        //EditText editTextYear = dialogView.findViewById(R.id.editTextYear);
-
-        // Lists of statuses
         Spinner spinnerRateStatus = dialogView.findViewById(R.id.spinnerRateStatus);
 
-        // Creates ArrayAdapters to populate the Spinners with statuses
-        ArrayAdapter<CharSequence> adapterRateStatus = ArrayAdapter.createFromResource(this,
-                R.array.rate_status_array, android.R.layout.simple_spinner_item);
+        setMaxEpisodes(animeData, textViewRateMaxEpisodes);
+        setEditTextFilters(editTextRateEpisodes, "0", animeData.getEpisodes());
+        setEditTextFilters(editTextRateScore, "0", "10");
+        setOnClickListeners(startingDateEditText);
+        setOnClickListeners(finishedDateEditText);
 
-        adapterRateStatus.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapterRateStatus = createAdapterFromResource(R.array.rate_status_array);
+        setSpinnerAdapter(spinnerRateStatus, adapterRateStatus);
 
-        // Set the adapter to the Spinner
-        spinnerRateStatus.setAdapter(adapterRateStatus);
-
-        // Set the values of the fields with the data from the active rating
         animeDataViewModel.getRatingData().observe(this, ratingData -> {
             if (ratingData != null) {
-                // Update dialog with rating data
-                spinnerRateStatus.setSelection(adapterRateStatus.getPosition(ratingData.getWatchStatus()));
-                editTextRateEpisodes.setText(ratingData.getEpisodesWatched());
-                editTextRateScore.setText(ratingData.getScore());
-                startingDateEditText.setText(DateConverter.convertDateMongoToJava(ratingData.getStartingDate()));
-                finishedDateEditText.setText(DateConverter.convertDateMongoToJava(ratingData.getFinishedDate()));
+                updateDialogWithRatingData(adapterRateStatus, ratingData,
+                        spinnerRateStatus, editTextRateEpisodes, editTextRateScore,
+                        startingDateEditText, finishedDateEditText);
             }
         });
 
-        builder.setPositiveButton("Rate", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Get the active user Id and the anime Id
-                String userId = animeDataViewModel.getActiveUserId();
-                String animeId = animeData.getId();
+        setPositiveButton(builder, animeData, spinnerRateStatus, editTextRateEpisodes,
+                editTextRateScore, startingDateEditText, finishedDateEditText);
 
-                // Get the values of the fields
-                String rateStatus = spinnerRateStatus.getSelectedItem().toString();
-                String rateEpisodes = editTextRateEpisodes.getText().toString();
-                String rateScore = editTextRateScore.getText().toString();
-                String rateStartingDate = startingDateEditText.getText().toString();
-                String rateFinishedDate = finishedDateEditText.getText().toString();
-
-                //Convert date formats to the one used in the API
-                rateStartingDate = DateConverter.convertDateJavaToMongo(rateStartingDate);
-                rateFinishedDate = DateConverter.convertDateJavaToMongo(rateFinishedDate);
-
-                // Llamar a la API
-
-                if(rateEpisodes.isEmpty())
-                    rateEpisodes = "0";
-
-                if(rateScore.isEmpty())
-                    rateScore = null;
-
-                if(userId != null && !userId.isEmpty() && animeId != null && !animeId.isEmpty()){
-                    Rating rating = new Rating(userId, animeId, rateStatus, rateEpisodes, rateScore, rateStartingDate, rateFinishedDate);
-                    animeDataViewModel.rateAnime(rating);
-                }
-
-                Toast.makeText(getApplicationContext(), "Anime rated", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel(); // Cierra el diálogo si se presiona "Cancelar"
-            }
-        });
+        setNegativeButton(builder);
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    private void setMaxEpisodes(Anime animeData, TextView textViewRateMaxEpisodes) {
+        textViewRateMaxEpisodes.setText(animeData.getEpisodes());
+    }
+
+    private void setEditTextFilters(EditText editText, String minValue, String maxValue) {
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(minValue, maxValue)});
+    }
+
+    private void setOnClickListeners(EditText editText) {
+        editText.setOnClickListener(v -> {
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = createDatePickerDialog(editText, year, month, day);
+            datePickerDialog.show();
+        });
+    }
+
+    private DatePickerDialog createDatePickerDialog(EditText editText, int year, int month, int day) {
+        return new DatePickerDialog(this, (view, year1, monthOfYear, dayOfMonth) ->
+                editText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1), year, month, day);
+    }
+
+    private ArrayAdapter<CharSequence> createAdapterFromResource(int arrayResource) {
+        return ArrayAdapter.createFromResource(this, arrayResource, android.R.layout.simple_spinner_item);
+    }
+
+    private void setSpinnerAdapter(Spinner spinner, ArrayAdapter<CharSequence> adapter) {
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    private void updateDialogWithRatingData(ArrayAdapter<CharSequence> adapterRateStatus, Rating ratingData,
+                                            Spinner spinnerRateStatus, EditText editTextRateEpisodes,
+                                            EditText editTextRateScore, EditText startingDateEditText,
+                                            EditText finishedDateEditText) {
+        spinnerRateStatus.setSelection(adapterRateStatus.getPosition(ratingData.getWatchStatus()));
+        editTextRateEpisodes.setText(ratingData.getEpisodesWatched());
+        editTextRateScore.setText(ratingData.getScore());
+        startingDateEditText.setText(DateConverter.convertDateMongoToJava(ratingData.getStartingDate()));
+        finishedDateEditText.setText(DateConverter.convertDateMongoToJava(ratingData.getFinishedDate()));
+    }
+
+    private void setPositiveButton(AlertDialog.Builder builder, Anime animeData,
+                                   Spinner spinnerRateStatus, EditText editTextRateEpisodes,
+                                   EditText editTextRateScore, EditText startingDateEditText,
+                                   EditText finishedDateEditText) {
+        builder.setPositiveButton("Rate", (dialog, which) -> {
+            String userId = animeDataViewModel.getActiveUserId();
+            String animeId = animeData.getId();
+            String rateStatus = getSelectedItemAsString(spinnerRateStatus);
+            String rateEpisodes = editTextRateEpisodes.getText().toString();
+            String rateScore = editTextRateScore.getText().toString();
+            String rateStartingDate = startingDateEditText.getText().toString();
+            String rateFinishedDate = finishedDateEditText.getText().toString();
+
+            rateStartingDate = DateConverter.convertDateJavaToMongo(rateStartingDate);
+            rateFinishedDate = DateConverter.convertDateJavaToMongo(rateFinishedDate);
+
+            if (rateEpisodes.isEmpty()) rateEpisodes = "0";
+            if (rateScore.isEmpty()) rateScore = null;
+
+            if (userId != null && !userId.isEmpty() && animeId != null && !animeId.isEmpty()) {
+                Rating rating = new Rating(userId, animeId, rateStatus, rateEpisodes, rateScore, rateStartingDate, rateFinishedDate);
+                animeDataViewModel.rateAnime(rating);
+            }
+
+            Toast.makeText(getApplicationContext(), "Anime rated", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+
+    private void setNegativeButton(AlertDialog.Builder builder) {
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+    }
+
+    private String getSelectedItemAsString(Spinner spinner) {
+        return spinner.getSelectedItem().toString();
+    }
+
 }

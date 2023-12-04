@@ -33,6 +33,11 @@
             android:label="Anime Data"
             android:parentActivityName=".MainActivity">
         </activity>
+        <activity
+            android:name=".ui.statistics.StatisticsActivity"
+            android:label="Statistics"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

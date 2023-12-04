@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ViewStyle">
+        <attr name="colorPrimary" format="color" />
+        <attr name="colorOnPrimary" format="color" />
+        <attr name="colorPrimaryContainer" format="color" />
+        <attr name="colorOnPrimaryContainer" format="color" />
+        <attr name="colorSurface" format="color" />
+        <attr name="colorOnSurface" format="color" />
+        <attr name="colorSurfaceVariant" format="color" />
+        <attr name="colorOnSurfaceVariant" format="color" />
+    </declare-styleable>
+</resources>
