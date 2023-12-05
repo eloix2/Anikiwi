@@ -51,6 +51,9 @@ public interface APIs {
     @PUT("rating/{id}/addEpisode")
     Call<RatingWithAnime> addEpisodeToRating(@Path("id") String ratingId);
 
+    @GET("users/{id}/stats")
+    Call<StatisticsResponse> getUserStatistics(@Path("id") String userId);
+
     //@GET("animes/search/limit=50")
     //Call<List<Anime>> filterAnimes(@Query("page") String text);
 }

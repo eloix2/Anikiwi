@@ -6,6 +6,7 @@ import com.example.anikiwi.networking.APIs;
 import com.example.anikiwi.networking.RetrofitClient;
 import com.example.anikiwi.networking.RetryQueue;
 import com.example.anikiwi.networking.SessionManager;
+import com.example.anikiwi.networking.StatisticsResponse;
 import com.example.anikiwi.networking.User;
 
 import org.json.JSONException;
@@ -104,6 +105,35 @@ public class UserRepository {
                 Log.d("UserRepository", "onFailure: " + t.getMessage());
             }
         });
+    }
+
+    public void getUserStatistics(String userId, final OnStatisticsResponseListener listener) {
+        APIs api = RetrofitClient.getInstance().getApis();
+        Call<StatisticsResponse> call = api.getUserStatistics(userId);
+
+        call.enqueue(new Callback<StatisticsResponse>() {
+            @Override
+            public void onResponse(Call<StatisticsResponse> call, Response<StatisticsResponse> response) {
+                if (response.isSuccessful()) {
+                    StatisticsResponse statistics = response.body();
+                    listener.onSuccess(statistics);
+                } else {
+                    listener.onError(); // You can pass an error message or handle it as needed
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatisticsResponse> call, Throwable t) {
+                listener.onError(); // Handle failure
+            }
+        });
+    }
+
+    // Listener interface for callback
+    public interface OnStatisticsResponseListener {
+        void onSuccess(StatisticsResponse statistics);
+
+        void onError();
     }
 
     /**
