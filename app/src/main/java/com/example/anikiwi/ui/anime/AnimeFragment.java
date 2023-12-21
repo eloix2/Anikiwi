@@ -266,19 +266,19 @@ public class AnimeFragment extends Fragment implements AnimeAdapter.ItemClickLis
 
         // Creates ArrayAdapters to populate the Spinners with seasons, types and statuses
         ArrayAdapter<CharSequence> adapterSeason = ArrayAdapter.createFromResource(this.requireContext(),
-                R.array.seasons_array, android.R.layout.simple_spinner_item);
+                R.array.seasons_array, R.layout.custom_spinner_item);
 
-        adapterSeason.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterSeason.setDropDownViewResource(R.layout.custom_spinner_item);
 
         ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(this.requireContext(),
-                R.array.types_array, android.R.layout.simple_spinner_item);
+                R.array.types_array, R.layout.custom_spinner_item);
 
-        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterType.setDropDownViewResource(R.layout.custom_spinner_item);
 
         ArrayAdapter<CharSequence> adapterStatus = ArrayAdapter.createFromResource(this.requireContext(),
-                R.array.status_array, android.R.layout.simple_spinner_item);
+                R.array.status_array, R.layout.custom_spinner_item);
 
-        adapterStatus.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterStatus.setDropDownViewResource(R.layout.custom_spinner_item);
 
         // Set the adapter to the Spinner
         spinnerSeasons.setAdapter(adapterSeason);

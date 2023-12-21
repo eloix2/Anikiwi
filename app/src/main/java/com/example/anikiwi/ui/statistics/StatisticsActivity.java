@@ -90,7 +90,7 @@ public class StatisticsActivity extends AppCompatActivity {
         binding.textViewEpisodesWatched.setText("Episodes Watched: " + statistics.getTotalEpisodesSeen());
 
         // Update Mean Score
-        binding.textViewMeanScore.setText("Mean Score: " + statistics.getMeanScoreCompleted());
+        binding.textViewMeanScore.setText(String.format("Mean Score: %.2f", statistics.getMeanScoreCompleted()));
 
         // Update the BarChart for Animes Ratings / Scores
         BarChart barChartAnimeRatingsScores = binding.barChartAnimeRatingsScores;

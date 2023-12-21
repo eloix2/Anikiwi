@@ -56,4 +56,19 @@
         <item name="android:textColor">?colorPrimary</item>
         <item name="android:textSize">18sp</item>
     </style>
+
+    <!-- Style of the date picker dialog menu. -->
+    <style name="MyDatePickerDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">?colorSecondary</item>
+        <item name="android:windowBackground">?colorSurface</item>
+        <item name="android:textColorPrimary">?colorSecondaryVariant</item>
+        <item name="android:textColorSecondary">?colorTertiary</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/TextButton</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/TextButton</item>
+    </style>
+
+    <style name="TextButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?colorSecondary</item>
+        <item name="backgroundTint">?colorOnSecondary</item>
+    </style>
 </resources>

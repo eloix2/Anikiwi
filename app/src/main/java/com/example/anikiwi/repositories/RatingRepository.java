@@ -80,31 +80,6 @@ public class RatingRepository {
         return rating;
     }
 
-
-    public MutableLiveData<List<RatingWithAnime>> getAnimesRatedByUser(String userId) {
-
-        APIs api = RetrofitClient.getInstance().getApis();
-        Call<List<RatingWithAnime>> call = api.getAnimesRatedByUser(userId);
-        call.enqueue(new Callback<List<RatingWithAnime>>() {
-            @Override
-            public void onResponse(Call<List<RatingWithAnime>> call, Response<List<RatingWithAnime>> response) {
-                if (response.isSuccessful()) {
-                    List<RatingWithAnime> ratings = response.body();
-                    ratedAnimesLiveData.postValue(ratings);
-                } else {
-                    // Handle unsuccessful response
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<RatingWithAnime>> call, Throwable t) {
-                // Handle network error
-            }
-        });
-
-        return ratedAnimesLiveData;
-    }
-
     public void loadMore(Map<String, Object> queryParams, OnDataLoadedListener onDataLoadedListener) {
         APIs api = RetrofitClient.getInstance().getApis();
         Call<List<RatingWithAnime>> call = api.getRatingsQuery(queryParams);

@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="16dp">
 
     <!-- Title TextView at the top, centered -->
@@ -30,9 +30,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/kiwi" />
+        android:src="@drawable/kiwi_no_bg" />
 
-    <!-- TODO: Style this view -->
     <!-- Button to login with Google, centered in the middle -->
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_button"
@@ -43,6 +42,19 @@
         android:layout_marginTop="80dp"
         android:text="Text"
         android:textSize="18sp" />
+
+        <!-- Text below the Google Sign-In button -->
+        <TextView
+            android:id="@+id/app_info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/google_button"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="75dp"
+            android:text="This app is developed by eloix2\n as part of his TFG for the FIB, \n Universitat Politècnica de Catalunya (UPC)."
+            android:textColor="?colorOnSurface"
+            android:gravity="center"/>
 
 
 </RelativeLayout>

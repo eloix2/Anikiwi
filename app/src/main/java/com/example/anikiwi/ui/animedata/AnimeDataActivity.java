@@ -28,6 +28,7 @@ import com.example.anikiwi.databinding.ActivityAnimeDataBinding;
 import com.example.anikiwi.networking.Anime;
 import com.example.anikiwi.networking.Rating;
 import com.example.anikiwi.utilities.DateConverter;
+import com.example.anikiwi.utilities.FilterUtils;
 import com.example.anikiwi.utilities.InputFilterMinMax;
 import com.example.anikiwi.utilities.ToolbarUtil;
 
@@ -139,11 +140,11 @@ public class AnimeDataActivity extends AppCompatActivity {
         EditText editTextRateScore = dialogView.findViewById(R.id.editTextRateScore);
         Spinner spinnerRateStatus = dialogView.findViewById(R.id.spinnerRateStatus);
 
-        setMaxEpisodes(animeData, textViewRateMaxEpisodes);
-        setEditTextFilters(editTextRateEpisodes, "0", animeData.getEpisodes());
-        setEditTextFilters(editTextRateScore, "0", "10");
-        setOnClickListeners(startingDateEditText);
-        setOnClickListeners(finishedDateEditText);
+        FilterUtils.setMaxEpisodes(animeData, textViewRateMaxEpisodes);
+        FilterUtils.setEditTextFilters(editTextRateEpisodes, "0", animeData.getEpisodes());
+        FilterUtils.setEditTextFilters(editTextRateScore, "0", "10");
+        FilterUtils.setOnClickListeners(this, startingDateEditText);
+        FilterUtils.setOnClickListeners(this, finishedDateEditText);
 
         ArrayAdapter<CharSequence> adapterRateStatus = createAdapterFromResource(R.array.rate_status_array);
         setSpinnerAdapter(spinnerRateStatus, adapterRateStatus);
@@ -165,37 +166,12 @@ public class AnimeDataActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void setMaxEpisodes(Anime animeData, TextView textViewRateMaxEpisodes) {
-        textViewRateMaxEpisodes.setText(animeData.getEpisodes());
-    }
-
-    private void setEditTextFilters(EditText editText, String minValue, String maxValue) {
-        editText.setFilters(new InputFilter[]{new InputFilterMinMax(minValue, maxValue)});
-    }
-
-    private void setOnClickListeners(EditText editText) {
-        editText.setOnClickListener(v -> {
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog datePickerDialog = createDatePickerDialog(editText, year, month, day);
-            datePickerDialog.show();
-        });
-    }
-
-    private DatePickerDialog createDatePickerDialog(EditText editText, int year, int month, int day) {
-        return new DatePickerDialog(this, (view, year1, monthOfYear, dayOfMonth) ->
-                editText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year1), year, month, day);
-    }
-
     private ArrayAdapter<CharSequence> createAdapterFromResource(int arrayResource) {
-        return ArrayAdapter.createFromResource(this, arrayResource, android.R.layout.simple_spinner_item);
+        return ArrayAdapter.createFromResource(this, arrayResource, R.layout.custom_spinner_item);
     }
 
     private void setSpinnerAdapter(Spinner spinner, ArrayAdapter<CharSequence> adapter) {
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_item);
         spinner.setAdapter(adapter);
     }
 

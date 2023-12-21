@@ -1,9 +1,12 @@
 package com.example.anikiwi.ui.ratings;
 
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,12 +14,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
@@ -34,13 +42,18 @@ import com.example.anikiwi.networking.SessionManager;
 import com.example.anikiwi.networking.User;
 import com.example.anikiwi.ui.anime.AnimeViewModel;
 import com.example.anikiwi.ui.animedata.AnimeDataActivity;
+import com.example.anikiwi.utilities.FilterUtils;
+import com.example.anikiwi.utilities.InputFilterMinMax;
 import com.example.anikiwi.utilities.OnDataLoadedListener;
 import com.example.anikiwi.utilities.ToolbarUtil;
 import com.example.anikiwi.utilities.WrapContentLinearLayoutManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RatingsFragment extends Fragment implements RatingAdapter.ItemClickListener {
 
@@ -214,7 +227,8 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
             public boolean onMenuItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.action_filter) {
                     // Handle action_filter click
-                    Toast.makeText(getContext(), "Filter icon pressed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Filter icon pressed", Toast.LENGTH_SHORT).show();
+                    showCustomDialog();
                     return true;
                 } else if (item.getItemId() == R.id.action_popup_menu) {
                     // Handle action_popup_menu click
@@ -341,6 +355,91 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
         }
     }
 
+    public void showCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_filter_ratings, null);
+        builder.setView(dialogView);
 
+        EditText editTextMinScore = dialogView.findViewById(R.id.editTextMinScore);
+        EditText editTextMaxScore = dialogView.findViewById(R.id.editTextMaxScore);
+        EditText editTextMinDate = dialogView.findViewById(R.id.editTextMinDate);
+        EditText editTextMaxDate = dialogView.findViewById(R.id.editTextMaxDate);
+
+        // Set min and max for editTexts and set onClickListeners for the date editTexts
+        FilterUtils.setEditTextFilters(editTextMinScore, "0", "10");
+        FilterUtils.setEditTextFilters(editTextMaxScore, "0", "10");
+        FilterUtils.setOnClickListeners(this.requireContext(), editTextMinDate);
+        FilterUtils.setOnClickListeners(this.requireContext(), editTextMaxDate);
+
+        // Set the values of the fields that are saved from the last search
+        editTextMinScore.setText(ratingsViewModel.getSavedQuery("minScore"));
+        editTextMaxScore.setText(ratingsViewModel.getSavedQuery("maxScore"));
+        editTextMinDate.setText(ratingsViewModel.getSavedQuery("minDate"));
+        editTextMaxDate.setText(ratingsViewModel.getSavedQuery("maxDate"));
+
+        // Button to clear the EditText fields
+        Button clearButton = dialogView.findViewById(R.id.buttonClear);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextMinScore.setText("");
+                editTextMaxScore.setText("");
+                editTextMinDate.setText("");
+                editTextMaxDate.setText("");
+            }
+        });
+
+        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String minScore = editTextMinScore.getText().toString();
+                String maxScore = editTextMaxScore.getText().toString();
+                String minDate = editTextMinDate.getText().toString();
+                String maxDate = editTextMaxDate.getText().toString();
+
+                // Realiza acciones con los datos ingresados por el usuario
+                // Llamar a la API
+                Map<String, Object> queryParams = new HashMap<>();
+                if(!minScore.isEmpty())
+                    queryParams.put("minScore", minScore);
+                if(!maxScore.isEmpty())
+                    queryParams.put("maxScore", maxScore);
+                if(!minDate.isEmpty())
+                    queryParams.put("minDate", minDate);
+                if(!maxDate.isEmpty())
+                    queryParams.put("maxDate", maxDate);
+
+                progressBar.setVisibility(View.VISIBLE);
+
+                ratingsViewModel.filterRatings(queryParams, new OnDataLoadedListener() {
+                    @Override
+                    public void onDataLoaded() {
+                        // Update the UI with the new data
+                        ratingAdapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
+                        linearLayoutError.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onDataLoadFailed(String errorMessage) {
+                        // Show error message with floating action button to retry
+                        linearLayoutError.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel(); // Cierra el diálogo si se presiona "Cancelar"
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 }

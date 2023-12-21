@@ -164,6 +164,27 @@ public class RatingsViewModel extends ViewModel {
         });
     }
 
+    public void filterRatings(Map<String, Object> queryParams, OnDataLoadedListener onDataLoadedListener) {
+        pageNumber = DEFAULT_START_PAGE;
+        savedQueryParams.clear();
+        savedQueryParams.putAll(queryParams);
+        queryParams.putAll(getDefaultQueryParams());
+        // Clears anime list and loads new data
+        ratingRepository.clearRatingWithAnimeList();
+        ratingRepository.loadMore(queryParams, new OnDataLoadedListener() {
+            @Override
+            public void onDataLoaded() {
+                // call the callback to notify the UI
+                onDataLoadedListener.onDataLoaded();
+            }
+
+            @Override
+            public void onDataLoadFailed(String errorMessage) {
+                onDataLoadedListener.onDataLoadFailed(errorMessage);
+            }
+        });
+    }
+
     /**
      * Gets the default query params.
      * @return the default query params
