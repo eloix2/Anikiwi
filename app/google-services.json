@@ -7,12 +7,57 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:905918218213:android:1c749916d95abf7892b90c",
+        "android_client_info": {
+          "package_name": "com.eloix.anikiwi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905918218213-9c4u5ltgr9cfhg6t2urj51enecm9qtua.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eloix.anikiwi",
+            "certificate_hash": "e9bede209c6823c2181d1c438ae2577fd67bb6b6"
+          }
+        },
+        {
+          "client_id": "905918218213-j6qjjs2rvdt4mv95pqlf2fsd52n7tgdo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOaAW5LYYR33gDD_P4QJqxdcBsvqq5UAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "905918218213-j6qjjs2rvdt4mv95pqlf2fsd52n7tgdo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:905918218213:android:e3d8b5c8b3f1877b92b90c",
         "android_client_info": {
           "package_name": "com.example.anikiwi"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "905918218213-6ueru51hm3ktebq7nb0f7snis4ipocna.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.anikiwi",
+            "certificate_hash": "e9bede209c6823c2181d1c438ae2577fd67bb6b6"
+          }
+        },
         {
           "client_id": "905918218213-j6qjjs2rvdt4mv95pqlf2fsd52n7tgdo.apps.googleusercontent.com",
           "client_type": 3

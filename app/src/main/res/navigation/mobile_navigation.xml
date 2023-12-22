@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_ratings"
-        android:name="com.example.anikiwi.ui.ratings.RatingsFragment"
+        android:name="com.eloix.anikiwi.ui.ratings.RatingsFragment"
         android:label="@string/title_ratings"
         tools:layout="@layout/fragment_ratings" />
 
     <fragment
         android:id="@+id/navigation_anime"
-        android:name="com.example.anikiwi.ui.anime.AnimeFragment"
+        android:name="com.eloix.anikiwi.ui.anime.AnimeFragment"
         android:label="@string/title_anime"
         tools:layout="@layout/fragment_anime" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.anikiwi.ui.profile.ProfileFragment"
+        android:name="com.eloix.anikiwi.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>
