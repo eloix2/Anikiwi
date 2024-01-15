@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eloix.anikiwi.networking.Anime;
+import com.eloix.anikiwi.model.Anime;
 import com.eloix.anikiwi.networking.SessionManager;
 import com.eloix.anikiwi.repositories.AnimeRepository;
 import com.eloix.anikiwi.utilities.OnDataLoadedListener;
@@ -39,7 +39,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void reloadRecommendedAnimes(OnDataLoadedListener onDataLoadedListener) {
-        animeRepository.makeRecommendedApiCall(getActiveUserId(), new OnDataLoadedListener() {
+        animeRepository.getRecommendedAnimes(getActiveUserId(), new OnDataLoadedListener() {
             @Override
             public void onDataLoaded() {
                 // call the callback to notify the UI

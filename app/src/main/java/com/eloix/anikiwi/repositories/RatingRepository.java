@@ -5,8 +5,8 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eloix.anikiwi.networking.APIs;
-import com.eloix.anikiwi.networking.Rating;
-import com.eloix.anikiwi.networking.RatingWithAnime;
+import com.eloix.anikiwi.model.Rating;
+import com.eloix.anikiwi.model.RatingWithAnime;
 import com.eloix.anikiwi.networking.RetrofitClient;
 import com.eloix.anikiwi.utilities.OnDataLoadedListener;
 

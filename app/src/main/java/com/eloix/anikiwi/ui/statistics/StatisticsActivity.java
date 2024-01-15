@@ -1,5 +1,6 @@
 package com.eloix.anikiwi.ui.statistics;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -7,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
 import com.eloix.anikiwi.databinding.ActivityStatisticsBinding;
-import com.eloix.anikiwi.networking.StatisticsResponse;
+import com.eloix.anikiwi.model.StatisticsResponse;
 import com.eloix.anikiwi.utilities.BarChartCustomizer;
 import com.eloix.anikiwi.utilities.ToolbarUtil;
 import com.github.mikephil.charting.charts.BarChart;
@@ -80,6 +81,7 @@ public class StatisticsActivity extends AppCompatActivity {
         return entries;
     }
 
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void updateUI(StatisticsResponse statistics) {
         // Update Animes Completed
         binding.textViewAnimesCompleted.setText("Animes Completed: " + statistics.getTotalAnimesCompleted());

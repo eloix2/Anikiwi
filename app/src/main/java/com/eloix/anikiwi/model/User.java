@@ -1,4 +1,4 @@
-package com.eloix.anikiwi.networking;
+package com.eloix.anikiwi.model;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -6,8 +6,8 @@ import com.eloix.anikiwi.networking.APIs;
 import com.eloix.anikiwi.networking.RetrofitClient;
 import com.eloix.anikiwi.networking.RetryQueue;
 import com.eloix.anikiwi.networking.SessionManager;
-import com.eloix.anikiwi.networking.StatisticsResponse;
-import com.eloix.anikiwi.networking.User;
+import com.eloix.anikiwi.model.StatisticsResponse;
+import com.eloix.anikiwi.model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;

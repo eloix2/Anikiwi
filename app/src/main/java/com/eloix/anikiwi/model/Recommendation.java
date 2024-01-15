@@ -1,10 +1,10 @@
-package com.eloix.anikiwi.networking;
+package com.eloix.anikiwi.model;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RecommendationResponse {
+public class Recommendation {
     @SerializedName("recommendations")
     private List<Anime> recommendations;
 

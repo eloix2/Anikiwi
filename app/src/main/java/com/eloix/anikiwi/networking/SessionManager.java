@@ -1,5 +1,7 @@
 package com.eloix.anikiwi.networking;
 
+import com.eloix.anikiwi.model.User;
+
 public class SessionManager {
     private static SessionManager instance;
     private static User activeUser;

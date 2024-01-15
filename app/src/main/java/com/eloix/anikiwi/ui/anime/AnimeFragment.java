@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.eloix.anikiwi.R;
 import com.eloix.anikiwi.adapter.AnimeAdapter;
 import com.eloix.anikiwi.databinding.FragmentAnimeBinding;
-import com.eloix.anikiwi.networking.Anime;
+import com.eloix.anikiwi.model.Anime;
 import com.eloix.anikiwi.ui.animedata.AnimeDataActivity;
 import com.eloix.anikiwi.utilities.OnDataLoadedListener;
 import com.eloix.anikiwi.utilities.ToolbarUtil;

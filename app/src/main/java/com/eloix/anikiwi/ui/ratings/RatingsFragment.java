@@ -31,9 +31,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.eloix.anikiwi.R;
 import com.eloix.anikiwi.adapter.RatingAdapter;
 import com.eloix.anikiwi.databinding.FragmentRatingsBinding;
-import com.eloix.anikiwi.networking.RatingWithAnime;
+import com.eloix.anikiwi.model.RatingWithAnime;
 import com.eloix.anikiwi.networking.SessionManager;
-import com.eloix.anikiwi.networking.User;
+import com.eloix.anikiwi.model.User;
 import com.eloix.anikiwi.ui.animedata.AnimeDataActivity;
 import com.eloix.anikiwi.utilities.FilterUtils;
 import com.eloix.anikiwi.utilities.OnDataLoadedListener;
@@ -236,26 +236,22 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
     private void showPopupMenu(View root) {
         PopupMenu popupMenu = new PopupMenu(requireContext(), requireView().findViewById(R.id.action_popup_menu));
         popupMenu.getMenuInflater().inflate(R.menu.ratings_popup_menu, popupMenu.getMenu());
-
         // Set the item click listener
         popupMenu.setOnMenuItemClickListener(menuItem -> {
-
-                if (menuItem.getItemId() == R.id.r_popup_option1) {
-                    // Handle option 1
-                    ratingsViewModel.setWatchStatus("watching");
-                } else if (menuItem.getItemId() == R.id.r_popup_option2) {
-                    // Handle option 2 click
-                    ratingsViewModel.setWatchStatus("completed");
-                } else if (menuItem.getItemId() == R.id.r_popup_option3) {
-                    // Handle option 3 click
-                    ratingsViewModel.setWatchStatus("planning");
-                } else if (menuItem.getItemId() == R.id.r_popup_option4) {
-                    // Handle option 4 click
-                    ratingsViewModel.setWatchStatus("dropped");
+                int menuItemId = menuItem.getItemId();
+                String watchStatus;
+                if (menuItemId == R.id.r_popup_option1) {
+                    watchStatus = "watching";
+                } else if (menuItemId == R.id.r_popup_option2) {
+                    watchStatus = "completed";
+                } else if (menuItemId == R.id.r_popup_option3) {
+                    watchStatus = "planning";
+                } else if (menuItemId == R.id.r_popup_option4) {
+                    watchStatus = "dropped";
                 } else {
                     return false;
                 }
-
+                ratingsViewModel.setWatchStatus(watchStatus);
                 progressBar.setVisibility(View.VISIBLE);
                 ratingsViewModel.refreshRatings(new OnDataLoadedListener() {
                     @Override
@@ -269,18 +265,14 @@ public class RatingsFragment extends Fragment implements RatingAdapter.ItemClick
                         linearLayoutError.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                     }
-
                     @Override
                     public void onDataLoadFailed(String errorMessage) {
                         linearLayoutError.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
                     }
                 });
-
                 return true;
-
         });
-
         popupMenu.show();
     }
 

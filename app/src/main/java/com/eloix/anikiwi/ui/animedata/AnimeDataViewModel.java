@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eloix.anikiwi.networking.Anime;
-import com.eloix.anikiwi.networking.Rating;
+import com.eloix.anikiwi.model.Anime;
+import com.eloix.anikiwi.model.Rating;
 import com.eloix.anikiwi.networking.SessionManager;
 import com.eloix.anikiwi.repositories.AnimeRepository;
 import com.eloix.anikiwi.repositories.RatingRepository;

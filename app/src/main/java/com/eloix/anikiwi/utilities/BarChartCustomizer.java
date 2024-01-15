@@ -6,7 +6,7 @@ import android.content.res.TypedArray;
 import androidx.core.content.ContextCompat;
 
 import com.eloix.anikiwi.R;
-import com.eloix.anikiwi.networking.AnimeScoreCount;
+import com.eloix.anikiwi.model.AnimeScoreCount;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;

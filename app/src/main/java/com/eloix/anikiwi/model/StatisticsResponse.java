@@ -1,5 +1,6 @@
-package com.eloix.anikiwi.networking;
+package com.eloix.anikiwi.model;
 
+import com.eloix.anikiwi.model.AnimeScoreCount;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

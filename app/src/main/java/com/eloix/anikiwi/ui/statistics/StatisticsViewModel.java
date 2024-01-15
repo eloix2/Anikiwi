@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eloix.anikiwi.networking.StatisticsResponse;
+import com.eloix.anikiwi.model.StatisticsResponse;
 import com.eloix.anikiwi.repositories.UserRepository;
 
 public class StatisticsViewModel extends ViewModel {

@@ -34,7 +34,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.eloix.anikiwi.R;
 import com.eloix.anikiwi.databinding.FragmentProfileBinding;
-import com.eloix.anikiwi.networking.Anime;
+import com.eloix.anikiwi.model.Anime;
 import com.eloix.anikiwi.networking.SessionManager;
 import com.eloix.anikiwi.ui.animedata.AnimeDataActivity;
 import com.eloix.anikiwi.ui.login.LoginActivity;

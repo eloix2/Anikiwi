@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eloix.anikiwi.networking.Anime;
+import com.eloix.anikiwi.model.Anime;
 import com.eloix.anikiwi.repositories.AnimeRepository;
 import com.eloix.anikiwi.utilities.OnDataLoadedListener;
 
@@ -95,7 +95,7 @@ public class AnimeViewModel extends ViewModel {
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
         animeRepository.clearAnimeList();
-        animeRepository.loadMore(queryParams, new OnDataLoadedListener() {
+        animeRepository.loadMoreAnimes(queryParams, new OnDataLoadedListener() {
             @Override
             public void onDataLoaded() {
                 // call the callback to notify the UI
@@ -121,7 +121,7 @@ public class AnimeViewModel extends ViewModel {
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
         animeRepository.clearAnimeList();
-        animeRepository.loadMore(queryParams, new OnDataLoadedListener() {
+        animeRepository.loadMoreAnimes(queryParams, new OnDataLoadedListener() {
             @Override
             public void onDataLoaded() {
                 // call the callback to notify the UI
@@ -147,7 +147,7 @@ public class AnimeViewModel extends ViewModel {
         queryParams.putAll(savedQueryParams);
         queryParams.putAll(getDefaultQueryParams());
 
-        animeRepository.loadMore(queryParams, new OnDataLoadedListener() {
+        animeRepository.loadMoreAnimes(queryParams, new OnDataLoadedListener() {
             @Override
             public void onDataLoaded() {
                 // Update the list with the loaded data
@@ -180,7 +180,7 @@ public class AnimeViewModel extends ViewModel {
         queryParams.putAll(getDefaultQueryParams());
         // Clears anime list and loads new data
         animeRepository.clearAnimeList();
-        animeRepository.loadMore(queryParams, new OnDataLoadedListener() {
+        animeRepository.loadMoreAnimes(queryParams, new OnDataLoadedListener() {
             @Override
             public void onDataLoaded() {
                 // call the callback to notify the UI

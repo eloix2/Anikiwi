@@ -7,7 +7,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.eloix.anikiwi.R;
-import com.eloix.anikiwi.networking.Anime;
+import com.eloix.anikiwi.model.Anime;
 
 import java.util.Calendar;
 

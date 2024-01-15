@@ -5,8 +5,8 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eloix.anikiwi.networking.APIs;
-import com.eloix.anikiwi.networking.Anime;
-import com.eloix.anikiwi.networking.RecommendationResponse;
+import com.eloix.anikiwi.model.Anime;
+import com.eloix.anikiwi.model.Recommendation;
 import com.eloix.anikiwi.networking.RetrofitClient;
 import com.eloix.anikiwi.utilities.OnDataLoadedListener;
 
@@ -29,7 +29,6 @@ public class AnimeRepository {
         if (instance == null) {
             instance = new AnimeRepository();
         }
-        //Log.d("AnimeRepository", "getInstance: " + instance.toString());
         return instance;
     }
 
@@ -69,34 +68,27 @@ public class AnimeRepository {
         });
     }
 
-    public void loadMore(Map<String, Object> queryParams, OnDataLoadedListener onDataLoadedListener) {
+    public void loadMoreAnimes(Map<String, Object> queryParams, OnDataLoadedListener onDataLoadedListener) {
         APIs api = RetrofitClient.getInstance().getApis();
         Call<List<Anime>> call = api.getAnimesQuery(queryParams);
         call.enqueue(new Callback<List<Anime>>() {
             @Override
             public void onResponse(Call<List<Anime>> call, Response<List<Anime>> response) {
                 if(response.body() == null){
-                    Log.d("AnimeRepository", "LoadMore onResponse: response.body() == null");
                     onDataLoadedListener.onDataLoadFailed("Response body is null");
                     return;
                 }
-
                 List<Anime> oldAnimes = animes.getValue();
                 if(oldAnimes == null){
-                    Log.d("AnimeRepository", "LoadMore onResponse: oldAnimes == null so we create a new list");
                     oldAnimes = response.body();
                 } else {
-                    Log.d("AnimeRepository", "LoadMore onResponse: oldAnimes != null so we add the new data to the list");
                     oldAnimes.addAll(response.body());
                 }
                 animes.postValue(oldAnimes);
-
                 onDataLoadedListener.onDataLoaded();
             }
-
             @Override
             public void onFailure(Call<List<Anime>> call, Throwable t) {
-                Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
                 onDataLoadedListener.onDataLoadFailed(t.getMessage());
             }
         });
@@ -132,12 +124,12 @@ public class AnimeRepository {
         return recommendedAnimesLiveData;
     }
 
-    public void makeRecommendedApiCall(String userId, OnDataLoadedListener onDataLoadedListener) {
+    public void getRecommendedAnimes(String userId, OnDataLoadedListener onDataLoadedListener) {
         APIs api = RetrofitClient.getInstance().getApis();
-        Call<RecommendationResponse> call = api.getRecommendedAnimes(userId);
-        call.enqueue(new Callback<RecommendationResponse>() {
+        Call<Recommendation> call = api.getRecommendedAnimes(userId);
+        call.enqueue(new Callback<Recommendation>() {
             @Override
-            public void onResponse(Call<RecommendationResponse> call, Response<RecommendationResponse> response) {
+            public void onResponse(Call<Recommendation> call, Response<Recommendation> response) {
                 if(response.body() == null){
                     Log.d("AnimeRepository", "LoadMore onResponse: response.body() == null");
                     onDataLoadedListener.onDataLoadFailed("Response body is null");
@@ -149,7 +141,7 @@ public class AnimeRepository {
             }
 
             @Override
-            public void onFailure(Call<RecommendationResponse> call, Throwable t) {
+            public void onFailure(Call<Recommendation> call, Throwable t) {
                 Log.d("AnimeRepository", "LoadMore onFailure: " + t.getMessage());
                 onDataLoadedListener.onDataLoadFailed(t.getMessage());
             }
